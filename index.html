@@ -1,0 +1,2600 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>HyMupen</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════════ */
+:root {
+  --g0: #0A0F0D;
+  --g1: #111814;
+  --g2: #1C2620;
+  --g3: #253028;
+  --g4: #2E3C34;
+  --g5: #3A4E43;
+  --ga: #4D6B5C;
+  --gb: #6B9278;
+  --gc: #9ABDA8;
+  --gd: #C5D9CE;
+  --ge: #E8F2ED;
+  --gf: #F4F8F6;
+  --gw: #FFFFFF;
+
+  --leaf:   #1B5E3B;
+  --leaf-2: #236B46;
+  --sprout: #2E8A58;
+  --mint:   #5BB88A;
+  --foam:   #A8D5BC;
+  --mist:   #EAF4EE;
+  --mist-2: #D8EDE1;
+
+  --amber:  #92550A;
+  --amber-l:#FEF3E0;
+  --red:    #8B2020;
+  --red-l:  #FDECEA;
+  --sky:    #1A4E7A;
+  --sky-l:  #E6F0FB;
+
+  --bg:     #F5F7F5;
+  --bg2:    #ECEEED;
+  --surf:   #FFFFFF;
+  --bdr:    #E2E8E4;
+  --bdr2:   #CDD8D2;
+
+  --ink:    #0D1A12;
+  --ink-2:  #2D4038;
+  --ink-3:  #5A7468;
+  --ink-4:  #8FA99E;
+  --ink-5:  #B8CEC8;
+
+  --serif:  'Lora', Georgia, serif;
+  --sans:   'Geist', system-ui, sans-serif;
+  --mono:   'Geist Mono', monospace;
+
+  --r:  8px;
+  --r2: 14px;
+  --r3: 20px;
+  --r4: 28px;
+  --sh: 0 1px 2px rgba(13,26,18,.05), 0 4px 12px rgba(13,26,18,.06);
+  --sh2:0 8px 32px rgba(13,26,18,.10);
+}
+
+/* ════════════════════════════════════════
+   RESET
+════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:15px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100dvh;overflow-x:hidden}
+button{font-family:var(--sans);cursor:pointer}
+input,select,textarea{font-family:var(--sans)}
+
+/* ════════════════════════════════════════
+   ANIMATIONS
+════════════════════════════════════════ */
+@keyframes fadeUp   {from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn   {from{opacity:0}to{opacity:1}}
+@keyframes scalePop {from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+@keyframes spin     {to{transform:rotate(360deg)}}
+@keyframes pulse    {0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes ringIn   {from{stroke-dashoffset:283}to{stroke-dashoffset:var(--target)}}
+@keyframes blink    {0%,100%{opacity:1}50%{opacity:.2}}
+
+.au {animation:fadeUp   .38s cubic-bezier(.22,1,.36,1) both}
+.au2{animation:fadeUp   .38s .07s cubic-bezier(.22,1,.36,1) both}
+.au3{animation:fadeUp   .38s .14s cubic-bezier(.22,1,.36,1) both}
+.au4{animation:fadeUp   .38s .21s cubic-bezier(.22,1,.36,1) both}
+.au5{animation:fadeUp   .38s .28s cubic-bezier(.22,1,.36,1) both}
+.sp {animation:scalePop .32s cubic-bezier(.22,1,.36,1) both}
+
+/* ════════════════════════════════════════
+   LANDING — MODE SELECT
+════════════════════════════════════════ */
+#land {
+  min-height:100dvh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:32px 20px;
+  background:var(--bg);
+  position:relative;
+  overflow:hidden;
+}
+#land::before {
+  content:'';position:absolute;
+  top:-120px;left:50%;transform:translateX(-50%);
+  width:600px;height:400px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(46,138,88,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.land-mark {
+  font-family:var(--serif);
+  font-size:13px;font-weight:400;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:32px;
+  display:flex;align-items:center;gap:10px;
+}
+.land-mark::before,.land-mark::after{content:'';flex:40px 0 0;height:1px;background:var(--bdr2)}
+.land-logo {
+  font-family:var(--serif);font-size:52px;
+  color:var(--leaf);letter-spacing:-.03em;
+  margin-bottom:8px;line-height:1;
+}
+.land-sub {
+  font-size:13px;color:var(--ink-3);text-align:center;
+  margin-bottom:48px;line-height:1.6;max-width:280px;
+}
+.role-grid {
+  display:flex;flex-direction:column;gap:10px;
+  width:100%;max-width:360px;
+}
+.role-btn {
+  display:flex;align-items:center;gap:16px;
+  padding:18px 20px;
+  border-radius:var(--r3);
+  border:1.5px solid var(--bdr);
+  background:var(--surf);
+  box-shadow:var(--sh);
+  transition:all .18s cubic-bezier(.22,1,.36,1);
+  text-align:left;
+}
+.role-btn:hover {
+  border-color:var(--sprout);
+  box-shadow:0 0 0 4px rgba(46,138,88,.08), var(--sh);
+  transform:translateY(-1px);
+}
+.role-btn:active{transform:scale(.98)}
+.rb-icon {
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.rb-text{flex:1}
+.rb-title{font-size:15px;font-weight:600;color:var(--ink);display:block}
+.rb-desc {font-size:12px;color:var(--ink-3);margin-top:2px;line-height:1.4;display:block}
+.rb-arrow{font-size:18px;color:var(--ink-5);flex-shrink:0;transition:transform .15s}
+.role-btn:hover .rb-arrow{transform:translateX(3px);color:var(--sprout)}
+
+.land-foot{margin-top:40px;font-size:11px;color:var(--ink-5);font-family:var(--mono)}
+
+/* ════════════════════════════════════════
+   APP SHELL
+════════════════════════════════════════ */
+#app{display:none;min-height:100dvh;flex-direction:column}
+#app.on{display:flex}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  position:sticky;top:0;z-index:100;
+  height:52px;
+  background:rgba(245,247,245,.9);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;
+  flex-shrink:0;
+}
+.tb-back {
+  width:34px;height:34px;border-radius:9px;
+  border:1px solid var(--bdr2);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-2);font-size:15px;
+  transition:all .12s;flex-shrink:0;
+}
+.tb-back:hover{background:var(--mist);border-color:var(--sprout)}
+.tb-logo {font-family:var(--serif);font-size:18px;color:var(--leaf);letter-spacing:-.01em;flex-shrink:0}
+.tb-badge {
+  font-size:10px;font-weight:600;
+  padding:2px 9px;border-radius:20px;
+  letter-spacing:.05em;text-transform:uppercase;flex-shrink:0;
+}
+.badge-p{background:var(--mist-2);color:var(--leaf)}
+.badge-s{background:var(--sky-l);color:var(--sky)}
+.badge-d{background:var(--g1);color:var(--gc)}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.live-pip{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-family:var(--mono);color:var(--sprout);
+}
+.pip-dot{width:5px;height:5px;border-radius:50%;background:var(--mint);animation:blink 1.6s ease infinite}
+.tb-notif-btn {
+  width:34px;height:34px;border-radius:9px;
+  border:1px solid var(--bdr);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;position:relative;transition:all .12s;
+}
+.tb-notif-btn:hover{background:var(--amber-l)}
+.notif-pip {
+  position:absolute;top:5px;right:5px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--red);border:1.5px solid var(--bg);
+  display:none;
+}
+.notif-pip.on{display:block}
+.tb-time{font-size:11px;font-family:var(--mono);color:var(--ink-4)}
+
+/* ─── DESKTOP SHELL ─── */
+.shell {display:flex;flex:1;min-height:0}
+
+/* SIDEBAR — desktop only */
+.sidebar {
+  width:212px;flex-shrink:0;
+  background:var(--surf);
+  border-right:1px solid var(--bdr);
+  display:none;
+  flex-direction:column;
+  position:sticky;top:52px;
+  height:calc(100dvh - 52px);
+  overflow-y:auto;
+}
+@media(min-width:720px){.sidebar{display:flex}}
+.sb-sec{padding:16px 0 4px}
+.sb-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);padding:0 14px 5px}
+.sb-link {
+  display:flex;align-items:center;gap:9px;
+  padding:8px 14px;font-size:13px;font-weight:500;
+  color:var(--ink-2);border:none;background:transparent;
+  width:100%;text-align:left;border-left:2px solid transparent;
+  transition:all .12s;
+}
+.sb-link:hover{background:var(--mist);color:var(--leaf)}
+.sb-link.on{background:var(--mist);color:var(--leaf);border-left-color:var(--sprout);font-weight:600}
+.sb-link .si{font-size:15px;flex-shrink:0}
+.sb-div{height:1px;background:var(--bdr);margin:6px 14px}
+.sb-field-chip {
+  display:flex;align-items:center;gap:8px;
+  padding:6px 14px;font-size:12px;color:var(--ink-3);
+  cursor:pointer;transition:all .12s;
+}
+.sb-field-chip:hover{color:var(--leaf);background:var(--mist)}
+.sb-field-chip.sel{color:var(--leaf);font-weight:500}
+.sf-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-foot{margin-top:auto;padding:14px}
+.sb-stock-mini{
+  background:var(--bg);border:1px solid var(--bdr);
+  border-radius:var(--r);padding:10px 12px;
+}
+.ssm-num{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--ink)}
+.ssm-lbl{font-size:11px;color:var(--ink-3);margin-top:1px}
+.ssm-bar{height:3px;background:var(--bdr);border-radius:2px;margin-top:6px;overflow:hidden}
+.ssm-fill{height:3px;border-radius:2px}
+
+/* ─── SCROLL AREA ─── */
+.scroll{flex:1;overflow-y:auto;min-width:0}
+
+/* ─── BOTTOM NAV — mobile only ─── */
+.bnav {
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(245,247,245,.95);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-top:1px solid var(--bdr);
+  display:flex;
+  padding:8px 0 max(10px,env(safe-area-inset-bottom));
+}
+@media(min-width:720px){.bnav{display:none}}
+.bn {
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;gap:2px;padding:2px 0;
+  border:none;background:transparent;
+}
+.bn-ico{font-size:21px;line-height:1.2;transition:transform .15s}
+.bn-lbl{font-size:10px;font-weight:500;color:var(--ink-4);transition:color .15s}
+.bn-bar{width:4px;height:4px;border-radius:2px;background:transparent;margin-top:1px;transition:all .15s}
+.bn.on .bn-ico{transform:scale(1.08)}
+.bn.on .bn-lbl{color:var(--leaf);font-weight:700}
+.bn.on .bn-bar{background:var(--sprout);width:18px}
+
+/* ════════════════════════════════════════
+   CONTENT PADDING
+════════════════════════════════════════ */
+.pad{padding:20px 16px}
+@media(min-width:720px){.pad{padding:24px 28px}}
+.pad-x{padding-left:16px;padding-right:16px}
+@media(min-width:720px){.pad-x{padding-left:28px;padding-right:28px}}
+.pb-nav{padding-bottom:88px}
+@media(min-width:720px){.pb-nav{padding-bottom:24px}}
+
+/* ════════════════════════════════════════
+   PAGE SYSTEM
+════════════════════════════════════════ */
+.pg{display:none}.pg.on{display:block}
+
+/* ════════════════════════════════════════
+   ██████  MODE PETANI  ██████
+════════════════════════════════════════ */
+
+/* ─ HERO STATUS ─ */
+.hero {
+  padding:24px 16px 20px;
+  display:flex;flex-direction:column;gap:24px;
+}
+@media(min-width:720px){.hero{padding:28px 28px 24px;flex-direction:row;align-items:flex-start;gap:32px}}
+
+.hero-left{flex:1;min-width:0}
+.hero-eyebrow{
+  font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+.hero-eyebrow button {
+  font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;
+  border:1px solid var(--bdr2);background:transparent;color:var(--ink-3);
+  transition:all .12s;margin-left:4px;
+}
+.hero-eyebrow button:hover{background:var(--mist);color:var(--leaf);border-color:var(--foam)}
+
+.status-number {
+  font-family:var(--serif);
+  font-size:clamp(72px,18vw,96px);
+  line-height:.92;
+  color:var(--ink);
+  letter-spacing:-.03em;
+  margin-bottom:4px;
+}
+.status-number .pct{font-size:.42em;vertical-align:super;color:var(--ink-3);font-family:var(--sans);font-weight:300;letter-spacing:0}
+.status-label {
+  font-size:14px;font-weight:500;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 12px;border-radius:20px;
+  margin-top:12px;
+}
+.sl-ok  {background:var(--mist);color:var(--leaf)}
+.sl-warn{background:var(--amber-l);color:var(--amber)}
+.sl-crit{background:var(--red-l);color:var(--red)}
+.sl-dot {width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sl-ok  .sl-dot{background:var(--sprout)}
+.sl-warn .sl-dot{background:var(--amber);animation:blink 1.2s ease infinite}
+.sl-crit .sl-dot{background:var(--red);animation:blink .8s ease infinite}
+
+.hero-message{
+  margin-top:14px;
+  font-size:13px;color:var(--ink-2);line-height:1.6;
+  max-width:360px;
+}
+
+.hero-right {
+  display:flex;flex-direction:row;gap:10px;
+  flex-wrap:wrap;
+}
+@media(min-width:720px){.hero-right{flex-direction:column;min-width:160px}}
+
+.metric-tile {
+  background:var(--surf);
+  border:1px solid var(--bdr);
+  border-radius:var(--r2);
+  padding:14px 16px;
+  min-width:100px;flex:1;
+  box-shadow:var(--sh);
+}
+.mt-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--ink);line-height:1}
+.mt-lbl{font-size:11px;color:var(--ink-3);margin-top:5px}
+.mt-sub{font-size:11px;font-weight:500;margin-top:4px}
+
+/* ─ DIVIDER ─ */
+.sect-div{
+  height:1px;background:var(--bdr);
+  margin:0 16px;
+}
+@media(min-width:720px){.sect-div{margin:0 28px}}
+
+/* ─ SECTION LABEL ─ */
+.sect-lbl {
+  font-size:11px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3);
+  padding:16px 16px 8px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+@media(min-width:720px){.sect-lbl{padding:16px 28px 8px}}
+.sect-lbl a{font-size:11px;color:var(--sprout);text-transform:none;letter-spacing:0;font-weight:600;cursor:pointer;text-decoration:none}
+
+/* ─ IRIGASI CTA ─ */
+.irr-cta {
+  margin:0 16px 4px;
+}
+@media(min-width:720px){.irr-cta{margin:0 28px 4px}}
+.irr-btn {
+  width:100%;padding:18px 20px;
+  border-radius:var(--r2);border:none;
+  display:flex;align-items:center;gap:14px;
+  transition:all .2s cubic-bezier(.22,1,.36,1);
+  position:relative;overflow:hidden;
+}
+.irr-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+  transform:translateX(-100%);transition:transform .4s;
+}
+.irr-btn:hover::after{transform:translateX(100%)}
+.irr-ready {
+  background:var(--leaf);
+  box-shadow:0 2px 8px rgba(27,94,59,.2), 0 8px 24px rgba(27,94,59,.15);
+}
+.irr-ready:hover{background:var(--leaf-2);box-shadow:0 4px 16px rgba(27,94,59,.3)}
+.irr-ready:active{transform:scale(.98);box-shadow:0 2px 8px rgba(27,94,59,.2)}
+.irr-running{
+  background:var(--amber);
+  box-shadow:0 2px 8px rgba(146,85,10,.2);
+  animation:irr-pulse 1.8s ease infinite;
+}
+@keyframes irr-pulse{
+  0%,100%{box-shadow:0 2px 8px rgba(146,85,10,.2),0 0 0 0 rgba(146,85,10,.15)}
+  50%{box-shadow:0 2px 8px rgba(146,85,10,.2),0 0 0 12px rgba(146,85,10,0)}
+}
+.irr-done{background:var(--sprout);box-shadow:0 2px 8px rgba(46,138,88,.2)}
+.irr-ico{
+  width:46px;height:46px;border-radius:12px;
+  background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.irr-body{flex:1;text-align:left}
+.irr-title{font-size:15px;font-weight:700;color:white}
+.irr-sub  {font-size:12px;color:rgba(255,255,255,.75);margin-top:2px}
+.irr-arrow{font-size:20px;color:rgba(255,255,255,.55);flex-shrink:0}
+
+/* ─ FIELD CARDS GRID ─ */
+.field-grid {
+  display:grid;gap:10px;
+  padding:0 16px;
+  grid-template-columns:1fr 1fr;
+}
+@media(min-width:480px){.field-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:720px){.field-grid{padding:0 28px}}
+
+.field-card {
+  background:var(--surf);
+  border:1.5px solid var(--bdr);
+  border-radius:var(--r2);
+  padding:14px;
+  cursor:pointer;
+  transition:all .18s cubic-bezier(.22,1,.36,1);
+  position:relative;overflow:hidden;
+}
+.field-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;
+  height:3px;border-radius:var(--r2) var(--r2) 0 0;
+  background:var(--c, var(--bdr));
+}
+.field-card:hover{border-color:var(--c,var(--sprout));box-shadow:var(--sh)}
+.field-card:active{transform:scale(.97)}
+.fc-name{font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.fc-crop{font-size:11px;color:var(--ink-4);margin-top:1px}
+.fc-num {
+  font-family:var(--mono);font-size:28px;font-weight:500;
+  color:var(--ink);margin:10px 0 2px;line-height:1;
+}
+.fc-lbl{font-size:10px;color:var(--ink-4)}
+.fc-status{
+  font-size:10px;font-weight:600;
+  padding:2px 7px;border-radius:20px;
+  margin-top:8px;display:inline-block;
+}
+
+/* ─ NOTIF CARDS ─ */
+.notif-wrap{padding:0 16px}
+@media(min-width:720px){.notif-wrap{padding:0 28px}}
+.notif-card {
+  display:flex;gap:12px;
+  padding:14px;
+  border-radius:var(--r2);
+  margin-bottom:8px;
+  transition:all .15s;
+}
+.notif-card:hover{box-shadow:var(--sh)}
+.nc-ico{font-size:18px;flex-shrink:0;margin-top:1px}
+.nc-title{font-size:13px;font-weight:600;color:var(--ink)}
+.nc-body {font-size:12px;color:var(--ink-2);margin-top:3px;line-height:1.5}
+.nc-time {font-size:10px;color:var(--ink-4);margin-top:5px;font-family:var(--mono)}
+.nc-crit{background:var(--red-l);border:1px solid #F5C0C0}
+.nc-warn{background:var(--amber-l);border:1px solid #F5D990}
+.nc-ok  {background:var(--mist);border:1px solid var(--mist-2)}
+.nc-info{background:var(--sky-l);border:1px solid #C0D8F5}
+
+/* ─ CUACA STRIP ─ */
+.cuaca-strip {
+  margin:0 16px;
+  background:var(--g1);
+  border-radius:var(--r2);
+  padding:14px 16px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all .15s;
+}
+@media(min-width:720px){.cuaca-strip{margin:0 28px}}
+.cuaca-strip:hover{background:var(--g2)}
+.cs-ico{font-size:28px;flex-shrink:0}
+.cs-body{flex:1}
+.cs-title{font-size:13px;font-weight:500;color:rgba(255,255,255,.6)}
+.cs-main {font-size:16px;font-weight:600;color:white;margin:2px 0}
+.cs-sub  {font-size:11px;color:rgba(255,255,255,.5);line-height:1.4}
+.cs-cta  {font-size:12px;font-weight:600;color:var(--mint);flex-shrink:0;white-space:nowrap}
+
+/* ─ CHART CARD ─ */
+.chart-card {
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--r2);padding:16px 16px 12px;
+  box-shadow:var(--sh);
+  margin:0 16px;
+}
+@media(min-width:720px){.chart-card{margin:0 28px}}
+.cc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cc-title{font-size:13px;font-weight:600;color:var(--ink)}
+.cc-sub  {font-size:11px;color:var(--ink-3)}
+.chart-area{position:relative;height:160px}
+@media(min-width:720px){.chart-area{height:200px}}
+
+/* ─ PRED BARS ─ */
+.pred-wrap{margin:0 16px}
+@media(min-width:720px){.pred-wrap{margin:0 28px}}
+.pred-item {
+  display:flex;align-items:center;gap:12px;
+  padding:9px 0;border-bottom:1px solid var(--bdr);
+}
+.pred-item:last-child{border-bottom:none}
+.pi-day  {font-size:12px;font-weight:500;color:var(--ink-2);min-width:72px;font-family:var(--mono)}
+.pi-track{flex:1;height:18px;background:var(--bg2);border-radius:9px;overflow:hidden}
+.pi-fill {height:18px;border-radius:9px;transition:width 1.2s cubic-bezier(.22,1,.36,1);min-width:4px;
+  position:relative;display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.pi-fill span{font-size:9px;font-weight:700;color:white;opacity:.9}
+.pi-ico  {font-size:14px;min-width:22px;text-align:center}
+
+/* ─ STOK PAGE ─ */
+.stok-hero {
+  padding:28px 16px 20px;
+  display:flex;align-items:flex-end;gap:20px;
+  border-bottom:1px solid var(--bdr);
+}
+@media(min-width:720px){.stok-hero{padding:28px 28px 20px}}
+.stok-big{font-family:var(--serif);font-size:64px;line-height:.9;color:var(--ink);letter-spacing:-.03em}
+.stok-unit{font-size:18px;font-weight:400;color:var(--ink-3);font-family:var(--sans);margin-left:4px}
+.stok-meta{flex:1;min-width:0}
+.stok-days{font-size:22px;font-weight:600;color:var(--ink);font-family:var(--mono)}
+.stok-lbl {font-size:12px;color:var(--ink-3);margin-top:2px}
+.stok-bar-wrap{padding:0 16px;margin-top:16px}
+@media(min-width:720px){.stok-bar-wrap{padding:0 28px}}
+.stok-bar-bg{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.stok-bar-fill{height:6px;border-radius:3px;transition:width 1.2s ease}
+
+/* ─ DETAIL TABLE ─ */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{
+  text-align:left;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-4);padding:7px 0;
+  border-bottom:1px solid var(--bdr);
+}
+.data-table td{padding:10px 0;border-bottom:1px solid var(--bdr);color:var(--ink-2);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--bg)}
+
+/* ─ PILL ─ */
+.pill{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.p-ok  {background:var(--mist-2);color:var(--leaf)}
+.p-warn{background:var(--amber-l);color:var(--amber)}
+.p-crit{background:var(--red-l);color:var(--red)}
+.p-off {background:var(--bg2);color:var(--ink-4)}
+.p-sky {background:var(--sky-l);color:var(--sky)}
+
+/* ════════════════════════════════════════
+   ██████  MODE PENYULUH  ██████
+════════════════════════════════════════ */
+.peny-stat-row {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;padding:20px 16px 16px;
+}
+@media(min-width:480px){.peny-stat-row{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:720px){.peny-stat-row{padding:24px 28px 20px}}
+
+.pstat-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--r2);padding:14px;
+  box-shadow:var(--sh);
+  position:relative;
+}
+.pstat-card::after{
+  content:'';display:block;position:absolute;
+  bottom:0;left:0;right:0;height:3px;
+  border-radius:0 0 var(--r2) var(--r2);
+  background:var(--ac,var(--bdr));
+}
+.psc-num{font-family:var(--mono);font-size:32px;font-weight:500;color:var(--ink);line-height:1}
+.psc-lbl{font-size:11px;color:var(--ink-3);margin-top:5px}
+
+.petani-item {
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--bdr);
+  cursor:pointer;transition:background .12s;
+}
+@media(min-width:720px){.petani-item{padding:14px 28px}}
+.petani-item:hover{background:var(--mist)}
+.pi-avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:var(--mist-2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  border:2px solid var(--surf);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+.pi-info{flex:1;min-width:0}
+.pi-name{font-size:14px;font-weight:600;color:var(--ink)}
+.pi-loc {font-size:11px;color:var(--ink-3);margin-top:1px}
+.pi-fields{font-size:11px;color:var(--ink-2);margin-top:2px}
+.pi-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.status-ring{
+  width:12px;height:12px;border-radius:50%;
+  position:relative;
+}
+.status-ring.crit{background:var(--red)}
+.status-ring.warn{background:var(--amber)}
+.status-ring.ok  {background:var(--sprout)}
+.status-ring.crit::after{
+  content:'';position:absolute;inset:-3px;
+  border-radius:50%;background:var(--red);
+  opacity:.3;animation:ringPop 1.4s ease-out infinite;
+}
+@keyframes ringPop{0%{transform:scale(1);opacity:.3}100%{transform:scale(2);opacity:0}}
+
+/* ════════════════════════════════════════
+   ██████  MODE DEV  ██████
+════════════════════════════════════════ */
+.dev-shell{
+  background:var(--g0);
+  min-height:calc(100dvh - 52px);
+  font-family:var(--mono);color:var(--gd);
+}
+.dev-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1px;
+  background:rgba(255,255,255,.04);
+}
+@media(min-width:720px){.dev-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1100px){.dev-grid{grid-template-columns:1fr 1fr 1fr}}
+.dev-panel{
+  background:var(--g0);
+  padding:16px 18px;
+}
+.dev-panel.span2{grid-column:span 1}
+@media(min-width:720px){.dev-panel.span2{grid-column:span 2}}
+.dp-title{
+  font-size:10px;font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ga);
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+.dp-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+.dp-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03);
+  font-size:12px;
+}
+.dp-row:last-child{border-bottom:none}
+.dk{color:var(--gb);opacity:.7}
+.dv{color:var(--gd);font-weight:500}
+.dv.ok  {color:var(--mint)}
+.dv.warn{color:#F4C84A}
+.dv.crit{color:#FF6B6B}
+.dv.dim {color:var(--ga)}
+
+.dev-log{
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.04);
+  border-radius:var(--r);
+  padding:10px;font-size:11px;line-height:1.8;
+  max-height:240px;overflow-y:auto;
+}
+.dev-log::-webkit-scrollbar{width:3px}
+.dev-log::-webkit-scrollbar-track{background:transparent}
+.dev-log::-webkit-scrollbar-thumb{background:var(--g4)}
+.log-line{display:flex;gap:8px;align-items:flex-start}
+.lt{color:var(--ga);opacity:.6;flex-shrink:0;min-width:44px}
+.lt-tag{
+  font-size:9px;font-weight:700;padding:1px 5px;
+  border-radius:3px;flex-shrink:0;margin-top:2px;
+  letter-spacing:.04em;
+}
+.lt-s{background:rgba(91,184,138,.18);color:#5BB88A}
+.lt-a{background:rgba(244,200,74,.18);color:#F4C84A}
+.lt-m{background:rgba(106,173,238,.18);color:#6AADEE}
+.lt-e{background:rgba(255,107,107,.18);color:#FF6B6B}
+.lm{color:var(--gc);opacity:.75;flex:1}
+
+/* ════════════════════════════════════════
+   BOTTOM SHEETS / MODALS
+════════════════════════════════════════ */
+.overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(13,26,18,.4);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s ease;
+}
+.overlay.on{opacity:1;pointer-events:all}
+@media(min-width:520px){
+  .overlay{align-items:center}
+  .sheet{border-radius:var(--r3) !important;max-width:440px;margin:auto}
+}
+.sheet{
+  background:var(--surf);
+  border-radius:var(--r3) var(--r3) 0 0;
+  width:100%;
+  max-height:92dvh;overflow-y:auto;
+  transform:translateY(20px);opacity:0;
+  transition:transform .28s cubic-bezier(.22,1,.36,1), opacity .22s ease;
+}
+.overlay.on .sheet{transform:translateY(0);opacity:1}
+.sheet-drag{width:34px;height:4px;background:var(--bdr2);border-radius:2px;margin:12px auto 0}
+.sheet-hdr{padding:16px 20px;border-bottom:1px solid var(--bdr)}
+.sh-title{font-family:var(--serif);font-size:19px;color:var(--ink)}
+.sh-sub  {font-size:12px;color:var(--ink-3);margin-top:3px}
+.sheet-body{padding:18px 20px}
+
+/* Irigasi sheet */
+.irg-field-box{
+  background:var(--mist);border:1px solid var(--mist-2);
+  border-radius:var(--r2);padding:16px;margin-bottom:14px;
+}
+.ifb-eyebrow{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sprout);margin-bottom:4px}
+.ifb-name{font-size:28px;font-family:var(--serif);color:var(--ink)}
+.ifb-vwc {font-size:13px;color:var(--ink-2);margin-top:4px}
+.irg-meta-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.irg-meta{background:var(--bg);border-radius:var(--r);padding:12px}
+.im-val{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--ink);line-height:1}
+.im-lbl{font-size:11px;color:var(--ink-3);margin-top:4px}
+
+/* Buttons */
+.btn-full{
+  width:100%;padding:15px;border-radius:var(--r2);
+  border:none;font-size:14px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all .15s;
+}
+.btn-full:active{transform:scale(.98)}
+.btn-green{background:var(--leaf);color:white;box-shadow:0 2px 10px rgba(27,94,59,.2)}
+.btn-green:hover{background:var(--leaf-2)}
+.btn-outline{
+  background:transparent;color:var(--ink-2);
+  border:1.5px solid var(--bdr);margin-top:8px;
+}
+.btn-outline:hover{background:var(--mist);border-color:var(--foam)}
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+.toast-stack{
+  position:fixed;bottom:84px;left:50%;transform:translateX(-50%);
+  z-index:500;display:flex;flex-direction:column;gap:8px;
+  align-items:center;pointer-events:none;
+}
+@media(min-width:720px){.toast-stack{bottom:24px}}
+.toast{
+  background:var(--g1);color:var(--gd);
+  padding:10px 16px;border-radius:20px;
+  font-size:13px;font-weight:500;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);
+  display:flex;align-items:center;gap:8px;
+  animation:fadeUp .25s cubic-bezier(.22,1,.36,1);
+  border:1px solid var(--g3);
+  white-space:nowrap;
+}
+.toast.green{background:var(--leaf);color:white;border-color:var(--leaf-2)}
+.toast.red  {background:var(--red);color:white;border-color:#6B1515}
+.toast.amber{background:var(--amber);color:white}
+
+/* ════════════════════════════════════════
+   POLISH — MICRO INTERACTIONS
+════════════════════════════════════════ */
+
+/* Touch ripple on field cards */
+.field-card {position:relative;overflow:hidden}
+.field-card::after {
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--rx,50%) var(--ry,50%), rgba(46,138,88,.15) 0%, transparent 60%);
+  opacity:0;transition:opacity .4s;pointer-events:none;
+}
+.field-card:active::after {opacity:1}
+
+/* Smooth progress bar on stok */
+@keyframes barGrow {from{width:0} to{width:var(--w)}}
+.stok-bar-fill {animation:barGrow 1.2s cubic-bezier(.22,1,.36,1) both}
+
+/* Pulse ring on critical status dot */
+.sl-crit .sl-dot {
+  position:relative;
+}
+.sl-crit .sl-dot::after {
+  content:'';position:absolute;inset:-3px;border-radius:50%;
+  background:var(--red);opacity:.4;
+  animation:critRing 1.2s ease-out infinite;
+}
+@keyframes critRing {0%{transform:scale(1);opacity:.4} 100%{transform:scale(2.5);opacity:0}}
+
+/* Better mobile tap target */
+.bn {min-height:44px}
+.role-btn {min-height:60px}
+
+/* Hero number smooth color transition */
+.status-number {transition:color .4s ease}
+
+/* Sheet close on drag indicator visual */
+.sheet-drag {
+  cursor:grab;
+  transition:background .15s;
+}
+.sheet-drag:hover {background:var(--bdr2)}
+
+/* Nav item active press feedback */
+.bn:active .bn-ico {transform:scale(.9) !important}
+.sb-link:active {opacity:.7}
+
+/* Notification dismiss animation */
+.notif-card {
+  transition:opacity .3s, transform .3s, max-height .4s;
+  overflow:hidden;
+}
+
+/* Irr button pulse shadow override for done state */
+.irr-done {
+  animation:none !important;
+  box-shadow:0 2px 12px rgba(46,138,88,.25) !important;
+}
+
+/* Skeleton loading state */
+.skeleton {
+  background:linear-gradient(90deg, var(--bg2) 25%, var(--bdr) 50%, var(--bg2) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:4px;
+  color:transparent !important;
+  pointer-events:none;
+}
+@keyframes shimmer {0%{background-position:200% 0} 100%{background-position:-200% 0}}
+
+/* Focus ring for accessibility */
+button:focus-visible, input:focus-visible {
+  outline:2px solid var(--sprout);
+  outline-offset:2px;
+}
+
+/* Tooltip helper */
+[data-tip] {position:relative;cursor:help}
+[data-tip]:hover::after {
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:var(--ink);color:white;
+  padding:4px 10px;border-radius:6px;
+  font-size:11px;font-family:var(--sans);white-space:nowrap;
+  z-index:200;pointer-events:none;
+  animation:fadeIn .15s ease;
+}
+
+/* ════════════════════════════════════════
+   SETTINGS PAGE
+════════════════════════════════════════ */
+.tgl-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--bdr);
+}
+.tgl-row:last-child{border-bottom:none}
+.tgl-info{}
+.tgl-lbl{font-size:13px;font-weight:500;color:var(--ink)}
+.tgl-sub{font-size:11px;color:var(--ink-3);margin-top:2px}
+.tgl{position:relative;width:42px;height:22px;flex-shrink:0}
+.tgl input{position:absolute;opacity:0;width:0;height:0}
+.tgl-t{
+  position:absolute;inset:0;border-radius:11px;
+  background:var(--bdr2);cursor:pointer;transition:.2s;
+}
+.tgl-t::before{
+  content:'';position:absolute;
+  width:16px;height:16px;top:3px;left:3px;
+  border-radius:50%;background:white;
+  transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.tgl input:checked + .tgl-t{background:var(--sprout)}
+.tgl input:checked + .tgl-t::before{transform:translateX(20px)}
+
+.rng-block{margin-bottom:16px}
+.rng-hdr{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:7px}
+.rng-hdr strong{font-family:var(--mono);color:var(--ink);font-size:13px;font-weight:500}
+input[type=range]{width:100%;accent-color:var(--sprout);cursor:pointer;height:4px}
+
+/* ════════════════════════════════════════
+   MISC UTILS
+════════════════════════════════════════ */
+.spacer-sm{height:8px}
+.spacer   {height:16px}
+.spacer-lg{height:24px}
+.text-center{text-align:center}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+
+/* ════════════════════════════════════════
+   AI ASSISTANT STYLES
+════════════════════════════════════════ */
+.ai-shell{display:flex;flex-direction:column;height:calc(100dvh - 52px);background:var(--bg)}
+.ai-hdr{padding:14px 16px 10px;border-bottom:1px solid var(--bdr);background:var(--surf);flex-shrink:0}
+@media(min-width:720px){.ai-hdr{padding:14px 28px 10px}}
+.ai-hdr-top{display:flex;align-items:center;gap:10px}
+.ai-avatar{width:36px;height:36px;border-radius:10px;background:var(--leaf);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ai-name{font-size:14px;font-weight:600;color:var(--ink)}
+.ai-status{font-size:11px;color:#2E8A58;display:flex;align-items:center;gap:4px;margin-top:1px}
+.ai-status-dot{width:5px;height:5px;border-radius:50%;background:#2E8A58;animation:blink 1.6s ease infinite}
+.quick-prompts{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.quick-prompts::-webkit-scrollbar{display:none}
+.qp-btn{flex-shrink:0;padding:5px 12px;border-radius:20px;border:1px solid var(--bdr2);background:var(--bg);font-size:11px;font-weight:500;color:var(--ink-2);cursor:pointer;transition:all .15s;font-family:var(--sans);white-space:nowrap}
+.qp-btn:hover{background:var(--mist);border-color:var(--foam);color:var(--leaf)}
+.qp-btn:active{transform:scale(.96)}
+.ai-analysis-bar{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:var(--surf);border-bottom:1px solid var(--bdr);flex-shrink:0;scrollbar-width:none}
+@media(min-width:720px){.ai-analysis-bar{padding:10px 28px}}
+.ai-analysis-bar::-webkit-scrollbar{display:none}
+.analysis-chip{flex-shrink:0;background:var(--bg);border:1px solid var(--bdr);border-radius:10px;padding:8px 12px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:2px;min-width:110px}
+.analysis-chip:hover{border-color:#2E8A58;background:var(--mist)}
+.analysis-chip:active{transform:scale(.97)}
+.ac-icon{font-size:16px}
+.ac-label{font-size:11px;font-weight:600;color:var(--ink);margin-top:2px}
+.ac-sub{font-size:10px;color:var(--ink-3)}
+.chat-scroll{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+@media(min-width:720px){.chat-scroll{padding:20px 28px 12px}}
+.chat-scroll::-webkit-scrollbar{width:3px}
+.chat-scroll::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px}
+.msg{display:flex;gap:10px;animation:fadeUp .25s ease both}
+.msg.user{flex-direction:row-reverse}
+.msg-avatar{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;align-self:flex-end}
+.msg.ai .msg-avatar{background:var(--leaf);color:white}
+.msg.user .msg-avatar{background:var(--bg2);color:var(--ink-2)}
+.msg-bubble{max-width:82%;padding:11px 14px;border-radius:16px;font-size:13px;line-height:1.65}
+.msg.ai .msg-bubble{background:var(--surf);border:1px solid var(--bdr);color:var(--ink);border-bottom-left-radius:4px}
+.msg.user .msg-bubble{background:var(--leaf);color:white;border-bottom-right-radius:4px}
+.msg-time{font-size:10px;color:var(--ink-4);margin-top:4px;font-family:var(--mono)}
+.msg.user .msg-time{text-align:right}
+.msg-thinking .msg-bubble{background:var(--surf);border:1px solid var(--bdr);display:flex;align-items:center;gap:8px;padding:12px 16px;color:var(--ink-3);font-size:12px}
+.think-dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--ink-4);animation:thinkBounce 1.2s ease infinite}
+.think-dots span:nth-child(2){animation-delay:.15s}
+.think-dots span:nth-child(3){animation-delay:.3s}
+@keyframes thinkBounce{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
+.ai-card{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 12px;margin-top:8px;font-size:12px}
+.ai-card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);margin-bottom:6px}
+.ai-card-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--bdr)}
+.ai-card-row:last-child{border-bottom:none}
+.ai-card-key{color:var(--ink-2)}
+.ai-card-val{font-weight:600;color:var(--ink);font-family:var(--mono)}
+.ai-rec{background:#EAF4EE;border-left:3px solid #2E8A58;border-radius:0 var(--r) var(--r) 0;padding:8px 12px;margin-top:8px;font-size:12px;color:var(--ink-2);line-height:1.6}
+.ai-warn-card{background:#FEF3E0;border-left:3px solid #92550A;border-radius:0 var(--r) var(--r) 0;padding:8px 12px;margin-top:8px;font-size:12px;color:var(--ink-2);line-height:1.6}
+.chat-input-wrap{padding:10px 16px max(12px,env(safe-area-inset-bottom));background:var(--surf);border-top:1px solid var(--bdr);flex-shrink:0}
+@media(min-width:720px){.chat-input-wrap{padding:12px 28px 16px}}
+.chat-input-row{display:flex;gap:8px;align-items:flex-end}
+.chat-input{flex:1;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:12px;font-size:13px;font-family:var(--sans);color:var(--ink);background:var(--bg);resize:none;min-height:42px;max-height:120px;outline:none;line-height:1.5;transition:border-color .15s}
+.chat-input:focus{border-color:#2E8A58;background:var(--surf)}
+.chat-input::placeholder{color:var(--ink-4)}
+.chat-send{width:42px;height:42px;border-radius:11px;background:var(--leaf);border:none;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .15s;flex-shrink:0}
+.chat-send:hover{background:var(--leaf-2)}
+.chat-send:active{transform:scale(.93)}
+.chat-send:disabled{background:var(--bdr2);cursor:not-allowed;opacity:.6}
+
+</style>
+</head>
+<body>
+
+<!-- ════════════ LANDING ════════════ -->
+<div id="land">
+  <div class="land-mark au">HyMupen Platform</div>
+  <div class="land-logo au2">HyMupen</div>
+  <p class="land-sub au3">Sistem irigasi cerdas hidrogel alami untuk pertanian lahan kering Madura</p>
+
+  <div class="role-grid au4">
+    <button class="role-btn" onclick="launch('petani')">
+      <div class="rb-icon" style="background:#EAF4EE">🧑‍🌾</div>
+      <div class="rb-text">
+        <span class="rb-title">Petani</span>
+        <span class="rb-desc">Pantau lahan & kontrol irigasi</span>
+      </div>
+      <span class="rb-arrow">›</span>
+    </button>
+    <button class="role-btn" onclick="launch('penyuluh')">
+      <div class="rb-icon" style="background:#E6F0FB">👨‍💼</div>
+      <div class="rb-text">
+        <span class="rb-title">Penyuluh Pertanian</span>
+        <span class="rb-desc">Pantau semua petani binaan</span>
+      </div>
+      <span class="rb-arrow">›</span>
+    </button>
+    <button class="role-btn" onclick="launch('dev')">
+      <div class="rb-icon" style="background:#111814;border:1px solid #2E3C34">⚙️</div>
+      <div class="rb-text">
+        <span class="rb-title">Developer / Admin</span>
+        <span class="rb-desc">Dashboard teknis IoT & sistem</span>
+      </div>
+      <span class="rb-arrow">›</span>
+    </button>
+  </div>
+
+  <div class="land-foot au5">v3.0 · HyMupen · UTM 2025</div>
+</div>
+
+<!-- ════════════ APP ════════════ -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <button class="tb-back" onclick="exitApp()">⟵</button>
+    <div class="tb-logo">HyMupen</div>
+    <span class="tb-badge" id="tb-badge"></span>
+    <div class="tb-right">
+      <div class="live-pip"><div class="pip-dot"></div><span id="live-txt">4</span></div>
+      <button class="tb-notif-btn" onclick="openSheet('sh-notif')">🔔<div class="notif-pip on" id="notif-pip"></div></button>
+      <div class="tb-time" id="clk"></div>
+    </div>
+  </div>
+
+  <!-- Shell -->
+  <div class="shell">
+    <!-- Desktop sidebar -->
+    <div class="sidebar" id="sidebar"></div>
+
+    <!-- Scroll area -->
+    <div class="scroll" id="scroll-area">
+      <!-- Pages rendered here -->
+      <div id="page-mount"></div>
+    </div>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bnav" id="bnav"></nav>
+</div>
+
+<!-- ════════════ SHEETS ════════════ -->
+<!-- Irigasi confirm -->
+<div class="overlay" id="sh-irr" onclick="shClick(event,'sh-irr')">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-hdr">
+      <div class="sh-title">Konfirmasi Irigasi</div>
+      <div class="sh-sub">Distribusi hidrogel ke zona akar</div>
+    </div>
+    <div class="sheet-body">
+      <div class="irg-field-box">
+        <div class="ifb-eyebrow">Petak aktif</div>
+        <div class="ifb-name" id="irr-field-name">A1 — Jagung</div>
+        <div class="ifb-vwc" id="irr-field-vwc">Kelembapan: 38% VWC</div>
+      </div>
+      <div class="irg-meta-row">
+        <div class="irg-meta">
+          <div class="im-val" id="irr-dose">80 g</div>
+          <div class="im-lbl">Dosis hidrogel</div>
+        </div>
+        <div class="irg-meta">
+          <div class="im-val">~4 mnt</div>
+          <div class="im-lbl">Estimasi durasi</div>
+        </div>
+      </div>
+      <button class="btn-full btn-green" onclick="doIrr()">💧 Mulai Irigasi Sekarang</button>
+      <button class="btn-full btn-outline" onclick="closeSheet('sh-irr')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Field detail -->
+<div class="overlay" id="sh-detail" onclick="shClick(event,'sh-detail')">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-hdr">
+      <div class="sh-title" id="sh-det-title">Petak A1</div>
+      <div class="sh-sub" id="sh-det-sub"></div>
+    </div>
+    <div class="sheet-body" id="sh-det-body"></div>
+  </div>
+</div>
+
+<!-- Notif -->
+<div class="overlay" id="sh-notif" onclick="shClick(event,'sh-notif')">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-hdr" style="display:flex;align-items:center;justify-content:space-between">
+      <div><div class="sh-title">Notifikasi</div><div class="sh-sub">3 belum dibaca</div></div>
+      <button onclick="clearNotifs()" style="border:none;background:none;font-size:12px;font-weight:700;color:var(--sprout);cursor:pointer;font-family:var(--sans)">Hapus semua</button>
+    </div>
+    <div class="sheet-body" id="notif-body"></div>
+  </div>
+</div>
+
+<!-- Cuaca -->
+<div class="overlay" id="sh-cuaca" onclick="shClick(event,'sh-cuaca')">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-hdr"><div class="sh-title">Prakiraan Cuaca</div><div class="sh-sub">BMKG — Sampang, Madura</div></div>
+    <div class="sheet-body" id="cuaca-body">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-stack" id="toasts"></div>
+
+<script>
+/* ═══════════════ STATE ═══════════════ */
+let ROLE = null, curTab = '', chartRefs = {};
+const S = {
+  tick: 0,
+  sel: 'A1',
+  stock: 2400,
+  fields: {
+    A1:{id:'A1',crop:'Jagung', vwc:38.0, temp:34.2, thr:35, dose:80,  loc:'Blok Utara', node:'ESP-001', batt:91},
+    A2:{id:'A2',crop:'Kedelai',vwc:52.3, temp:32.1, thr:42, dose:85,  loc:'Blok Utara', node:'ESP-002', batt:78},
+    B1:{id:'B1',crop:'Cabai',  vwc:28.1, temp:33.8, thr:38, dose:120, loc:'Blok Selatan',node:'LoRa-001',batt:65},
+    B2:{id:'B2',crop:'Tomat',  vwc:61.0, temp:31.5, thr:40, dose:70,  loc:'Blok Selatan',node:'LoRa-002',batt:34},
+  },
+  notifs: [
+    {type:'crit',icon:'🚨',title:'Petak B1 Kritis — 28% VWC',body:'Kelembapan di bawah titik layu permanen cabai. Irigasi darurat diaktifkan 07:15.',time:'32 mnt lalu'},
+    {type:'warn',icon:'⚠️',title:'Petak A1 mendekati threshold',body:'VWC 38% mendekati batas 35%. Irigasi otomatis aktif ~15 menit.',time:'10 mnt lalu'},
+    {type:'ok',  icon:'✅',title:'Irigasi A2 selesai',body:'85g hidrogel berhasil terdistribusi. Durasi 4 mnt 30 dtk.',time:'1 jam lalu'},
+    {type:'info',icon:'🌧️',title:'Hujan diprediksi Sabtu',body:'BMKG: 12mm. Irigasi Jumat malam dibatalkan otomatis.',time:'2 jam lalu'},
+  ]
+};
+
+const status = v => v < 30 ? 'crit' : v < 45 ? 'warn' : 'ok';
+const statusLabel = s => ({ok:'Baik',warn:'Perhatian',crit:'Kritis'})[s];
+const statusColor    = s => ({ok:'var(--sprout)',warn:'var(--amber)',crit:'var(--red)'})[s];   // for DOM
+const statusColorHex = s => ({ok:'#2E8A58',warn:'#92550A',crit:'#8B2020'})[s];               // for Canvas
+const vColor  = v => v < 30 ? 'var(--red)'  : v < 45 ? 'var(--amber)'  : 'var(--sprout)'; // CSS vars for DOM
+const vColorHex = v => v < 30 ? '#8B2020' : v < 45 ? '#92550A' : '#2E8A58'; // hex for Canvas/Chart.js
+
+/* ═══════════════ CLOCK ═══════════════ */
+function tickClock(){
+  const t = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});
+  const el = document.getElementById('clk'); if(el) el.textContent = t+' WIB';
+}
+setInterval(tickClock, 1000); tickClock();
+
+/* ═══════════════ UTILS ═══════════════ */
+function $(id){ return document.getElementById(id) }
+function toast(msg, type=''){
+  const t = document.createElement('div');
+  t.className = 'toast '+(type||'');
+  t.textContent = msg;
+  $('toasts').appendChild(t);
+  setTimeout(()=>{ t.style.transition='.3s'; t.style.opacity='0'; t.style.transform='translateY(4px)'; setTimeout(()=>t.remove(),300); }, 2800);
+}
+
+function openSheet(id){ $(id).classList.add('on') }
+function closeSheet(id){ $(id).classList.remove('on') }
+function shClick(e, id){ if(e.target === $(id)) closeSheet(id) }
+
+function destroyCharts(){
+  Object.entries(chartRefs).forEach(([k,c])=>{
+    try{ if(c && typeof c.destroy==='function') c.destroy(); }
+    catch(e){ console.warn('Chart destroy error:',k,e); }
+  });
+  chartRefs = {};
+}
+
+/* ═══════════════ LAUNCH ══════════════ */
+function launch(role){
+  ROLE = role;
+  $('land').style.display = 'none';
+  $('app').classList.add('on');
+  const badge = $('tb-badge');
+  badge.className = 'tb-badge '+{petani:'badge-p',penyuluh:'badge-s',dev:'badge-d'}[role];
+  badge.textContent = {petani:'Petani',penyuluh:'Penyuluh',dev:'Dev'}[role];
+  buildNav();
+  const first = {petani:'beranda', penyuluh:'ringkasan', dev:'sistem'}[role];
+  goTab(first);
+}
+
+function exitApp(){
+  ROLE = null;
+  $('app').classList.remove('on');
+  $('land').style.display = 'flex';
+  destroyCharts();
+}
+
+/* ═══════════════ NAV ═════════════════ */
+const NAVS = {
+  petani:   [{id:'beranda',ico:'🏡',lbl:'Beranda'},{id:'lahan',ico:'🌾',lbl:'Lahan'},{id:'prediksi',ico:'🔮',lbl:'Prediksi'},{id:'stok',ico:'🧪',lbl:'Stok'},{id:'ai',ico:'🤖',lbl:'AI'}],
+  penyuluh: [{id:'ringkasan',ico:'📊',lbl:'Ringkasan'},{id:'petani',ico:'🧑‍🌾',lbl:'Petani'},{id:'laporan',ico:'📋',lbl:'Laporan'},{id:'ai',ico:'🤖',lbl:'AI'}],
+  dev:      [{id:'sistem',ico:'⚙️',lbl:'Sistem'},{id:'sensor',ico:'📡',lbl:'Sensor'},{id:'log',ico:'📜',lbl:'Log'},{id:'ai',ico:'🤖',lbl:'AI'}],
+};
+
+function buildNav(){
+  const items = NAVS[ROLE]||[];
+  // bottom nav
+  $('bnav').innerHTML = items.map(n=>`
+    <button class="bn" id="bn-${n.id}" onclick="goTab('${n.id}')">
+      <span class="bn-ico">${n.ico}</span>
+      <span class="bn-lbl">${n.lbl}</span>
+      <span class="bn-bar"></span>
+    </button>`).join('');
+
+  // sidebar
+  const sb = $('sidebar');
+  sb.innerHTML = `
+    <div class="sb-sec">
+      <div class="sb-lbl">Menu</div>
+      ${items.map(n=>`<button class="sb-link" id="sb-${n.id}" onclick="goTab('${n.id}')"><span class="si">${n.ico}</span>${n.lbl}</button>`).join('')}
+    </div>
+    ${ROLE!=='dev'?`
+    <div class="sb-div"></div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Petak Lahan</div>
+      ${Object.values(S.fields).map(f=>`
+        <div class="sb-field-chip ${S.sel===f.id?'sel':''}" onclick="S.sel='${f.id}';buildNav();goTab(curTab)">
+          <div class="sf-dot" style="background:${statusColor(status(f.vwc))}"></div>
+          ${f.id} — ${f.crop}
+        </div>`).join('')}
+    </div>
+    <div class="sb-foot">
+      <div class="sb-stock-mini">
+        <div class="sb-lbl" style="padding:0;margin-bottom:5px">Stok Hidrogel</div>
+        <div class="ssm-num">${(S.stock/1000).toFixed(1)} kg</div>
+        <div class="ssm-lbl">~${Math.round(S.stock/133)} hari</div>
+        <div class="ssm-bar"><div class="ssm-fill" style="width:${(S.stock/5000*100).toFixed(0)}%;background:${S.stock<1000?'var(--red)':S.stock<2000?'var(--amber)':'var(--sprout)'}"></div></div>
+      </div>
+    </div>`:''}`;
+}
+
+function goTab(id){
+  if(!ROLE) return;
+  curTab = id;
+  destroyCharts();
+  render(id);
+
+  // sync nav highlight
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.sb-link').forEach(s=>s.classList.remove('on'));
+  const bn = $('bn-'+id), sb = $('sb-'+id);
+  if(bn) bn.classList.add('on');
+  if(sb) sb.classList.add('on');
+}
+
+/* ═══════════════ RENDER ROUTER ═══════ */
+function render(id){
+  const pm = $('page-mount');
+  // Page transition
+  pm.style.opacity = '0';
+  pm.style.transform = 'translateY(8px)';
+  pm.style.transition = 'none';
+  
+  const map = {
+    beranda: renderBeranda, lahan: renderLahan,
+    prediksi: renderPrediksi, stok: renderStok, atur: renderAtur,
+    ringkasan: renderRingkasan, petani: renderPetaniList, laporan: renderLaporan,
+    sistem: renderDevSistem, sensor: renderDevSensor, log: renderDevLog, config: renderDevConfig,
+    ai: renderAI,
+  };
+  if(map[id]) map[id](pm); else pm.innerHTML='<div style="padding:60px 20px;text-align:center;color:var(--ink-3);font-size:13px"><div style="font-size:32px;margin-bottom:12px">🌿</div>Halaman tidak ditemukan</div>';
+  // Animate in
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      pm.style.transition = 'opacity .28s cubic-bezier(.22,1,.36,1), transform .28s cubic-bezier(.22,1,.36,1)';
+      pm.style.opacity = '1';
+      pm.style.transform = 'translateY(0)';
+    });
+  });
+  // scroll to top
+  const sa = $('scroll-area');
+  if(sa) sa.scrollTop = 0;
+}
+
+/* ═══════════════════════════════════════
+   PETANI — BERANDA
+═══════════════════════════════════════ */
+function renderBeranda(el){
+  const f = S.fields[S.sel];
+  const st = status(f.vwc);
+  const slClass = {ok:'sl-ok',warn:'sl-warn',crit:'sl-crit'}[st];
+  const slText = {ok:'Lahan Sehat',warn:'Perlu Irigasi',crit:'Kondisi Kritis'}[st];
+  const msg = {
+    ok:'Sistem hidrogel bekerja optimal. Kelembapan tanah dalam kondisi baik, tidak diperlukan intervensi saat ini.',
+    warn:'Kelembapan mendekati batas threshold. Pertimbangkan untuk mengaktifkan irigasi segera.',
+    crit:'Kelembapan sangat rendah — di bawah titik layu permanen. Segera aktifkan irigasi untuk mencegah kerusakan tanaman.'
+  }[st];
+
+  el.innerHTML = `
+  <div class="pb-nav">
+    <!-- HERO -->
+    <div class="hero au">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span>Petak ${f.id} · ${f.crop}</span>
+          <button onclick="cycleField()">Ganti ›</button>
+        </div>
+        <div class="status-number" id="hero-num"><span id="hero-count">0</span><span class="pct">%</span></div>
+        <div class="status-label ${slClass}">
+          <div class="sl-dot"></div>${slText}
+        </div>
+        <p class="hero-message">${msg}</p>
+      </div>
+      <div class="hero-right au2">
+        <div class="metric-tile">
+          <div class="mt-val" id="hero-temp">${f.temp}</div>
+          <div class="mt-lbl">Suhu tanah (°C)</div>
+          <div class="mt-sub" style="color:var(--amber)">${f.temp>33?'Tinggi':'Normal'}</div>
+        </div>
+        <div class="metric-tile">
+          <div class="mt-val">${f.thr}</div>
+          <div class="mt-lbl">Threshold (% VWC)</div>
+          <div class="mt-sub" style="color:var(--sprout)">Model adaptif</div>
+        </div>
+        <div class="metric-tile" onclick="goTab('stok')" style="cursor:pointer">
+          <div class="mt-val">${(S.stock/1000).toFixed(1)}</div>
+          <div class="mt-lbl">Stok hidrogel (kg)</div>
+          <div class="mt-sub" style="color:${S.stock<1000?'#8B2020':S.stock<2000?'#92550A':'#2E8A58'}">
+            ${S.stock<1000?'⚠️ Segera isi ulang':'~'+Math.round(S.stock/133)+' hari tersisa'}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sect-div"></div>
+
+    <!-- CTA IRIGASI -->
+    <div class="irr-cta" style="padding:16px 16px 0">
+      <button class="irr-btn irr-ready au3" id="irr-main-btn" onclick="showIrrSheet('${f.id}')">
+        <div class="irr-ico">💧</div>
+        <div class="irr-body">
+          <div class="irr-title">Aktifkan Irigasi</div>
+          <div class="irr-sub">Distribusi ${f.dose}g hidrogel ke Petak ${f.id}</div>
+        </div>
+        <div class="irr-arrow">›</div>
+      </button>
+    </div>
+
+    <!-- CUACA STRIP -->
+    <div style="padding:10px 16px 0" class="au4">
+      <div class="cuaca-strip" onclick="openSheet('sh-cuaca')">
+        <span class="cs-ico">🌤️</span>
+        <div class="cs-body">
+          <div class="cs-title">BMKG — Sampang, Madura</div>
+          <div class="cs-main">Cerah berawan · 33°C</div>
+          <div class="cs-sub">Sabtu: Hujan 12mm · Irigasi Jumat malam dibatalkan</div>
+        </div>
+        <span class="cs-cta">Detail ›</span>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- NOTIF -->
+    <div class="sect-lbl au5">Notifikasi Terbaru <a onclick="openSheet('sh-notif')">Lihat semua</a></div>
+    <div class="notif-wrap au5">
+      <div class="notif-card nc-crit">
+        <span class="nc-ico">🚨</span>
+        <div>
+          <div class="nc-title">Petak B1 Kritis — 28% VWC</div>
+          <div class="nc-body">Di bawah titik layu permanen cabai. Irigasi darurat telah diaktifkan 07:15.</div>
+          <div class="nc-time">32 mnt lalu</div>
+        </div>
+      </div>
+      <div class="notif-card nc-warn">
+        <span class="nc-ico">⚠️</span>
+        <div>
+          <div class="nc-title">Petak A1 mendekati threshold (38% → 35%)</div>
+          <div class="nc-body">Irigasi otomatis akan aktif ~15 menit jika tidak ada intervensi.</div>
+          <div class="nc-time">10 mnt lalu</div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer-lg"></div>
+  </div>`;
+  // Animate counter from 0 to current VWC (with stale check)
+  const target = parseFloat(f.vwc.toFixed(0));
+  const countEl = $('hero-count');
+  if(countEl){
+    const animId = Date.now(); countEl.dataset.anim = animId;
+    let dur = 800, startTime = null;
+    const ease = t => t<.5 ? 2*t*t : -1+(4-2*t)*t;
+    const step = ts => {
+      if(countEl.dataset.anim != animId) return; // stale, abort
+      if(!startTime) startTime = ts;
+      const p = Math.min((ts-startTime)/dur, 1);
+      countEl.textContent = Math.round(ease(p) * target);
+      if(p < 1) requestAnimationFrame(step);
+      else countEl.textContent = target;
+    };
+    requestAnimationFrame(step);
+  }
+}
+
+/* ═══════════════════════════════════════
+   PETANI — LAHAN
+═══════════════════════════════════════ */
+function renderLahan(el){
+  el.innerHTML = `
+  <div class="pb-nav">
+    <div class="sect-lbl au">Semua Petak Lahan</div>
+    <div class="field-grid au2">
+      ${Object.values(S.fields).map(f=>{
+        const st = status(f.vwc), c = statusColor(st);
+        return `<div class="field-card au2" style="--c:${c}" onclick="openFieldSheet('${f.id}')">
+          <div class="fc-name">${f.id}</div>
+          <div class="fc-crop">${f.crop}</div>
+          <div class="fc-num" style="color:${vColor(f.vwc)}">${f.vwc.toFixed(0)}</div>
+          <div class="fc-lbl">% VWC</div>
+          <div class="fc-status pill p-${st}">${statusLabel(st)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="spacer"></div>
+    <div class="sect-div"></div>
+    <div class="sect-lbl au3">Tren Kelembapan 24 Jam — Petak ${S.sel}</div>
+    <div class="chart-card au3">
+      <div class="chart-area"><canvas id="lahan-chart"></canvas></div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="sect-lbl au4">Detail Sensor</div>
+    <div style="padding:0 16px" class="au4">
+      <table class="data-table" style="width:100%">
+        <thead><tr><th>Petak</th><th>VWC</th><th>Suhu</th><th>Node</th><th>Status</th></tr></thead>
+        <tbody>
+          ${Object.values(S.fields).map(f=>`
+          <tr onclick="openFieldSheet('${f.id}')" style="cursor:pointer">
+            <td><strong>${f.id}</strong> ${f.crop}</td>
+            <td style="font-family:var(--mono);font-weight:500;color:${vColor(f.vwc)}">${f.vwc.toFixed(1)}%</td>
+            <td style="font-family:var(--mono)">${f.temp}°C</td>
+            <td style="font-family:var(--mono);font-size:11px;color:var(--ink-3)">${f.node}</td>
+            <td><span class="pill p-${status(f.vwc)}">${statusLabel(status(f.vwc))}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="spacer-lg"></div>
+  </div>`;
+
+  setTimeout(()=>{
+    const ctx = $('lahan-chart'); if(!ctx) return;
+    const f = S.fields[S.sel];
+    const h = Array.from({length:13},(_,i)=>{ const hr=(6+i*2)%24; return String(hr).padStart(2,'0')+':00'; });
+    const d = [58,55,52,49,46,43,41,40,39,38.5,f.vwc+1,f.vwc+.5,f.vwc];
+    const g = ctx.getContext('2d');
+    const grad = g.createLinearGradient(0,0,0,160);
+    grad.addColorStop(0,`${vColor(f.vwc).replace(')',', .18)')`);
+    grad.addColorStop(1,`${vColor(f.vwc).replace(')',', 0)')`);
+    chartRefs.lahan = new Chart(ctx,{type:'line',data:{labels:h,datasets:[
+      {data:d,borderColor:vColor(f.vwc),backgroundColor:grad,borderWidth:2,pointRadius:0,fill:true,tension:.4},
+      {data:Array(13).fill(f.thr),borderColor:'rgba(146,85,10,.5)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false,label:'Threshold'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+      x:{grid:{display:false},ticks:{font:{size:10,family:'monospace'},color:'#8FA99E',maxTicksLimit:7}},
+      y:{min:20,max:70,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10,family:'monospace'},color:'#8FA99E',callback:v=>v+'%'}}
+    }}});
+  }, 50);
+}
+
+/* ═══════════════════════════════════════
+   PETANI — PREDIKSI
+═══════════════════════════════════════ */
+function renderPrediksi(el){
+  const preds=[
+    {day:'Hari ini',val:38,ico:''},
+    {day:'Besok',   val:32,ico:''},
+    {day:'Rabu',    val:26,ico:'🚨'},
+    {day:'Kamis',   val:40,ico:'*'},
+    {day:'Jumat',   val:37,ico:''},
+    {day:'Sabtu',   val:55,ico:'🌧️'},
+    {day:'Minggu',  val:51,ico:''},
+  ];
+  el.innerHTML = `
+  <div class="pb-nav">
+    <div class="pad au">
+      <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--amber-l);border:1px solid #F5D990;border-radius:var(--r2);margin-bottom:0">
+        <span style="font-size:24px">⚠️</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--amber)">Risiko Kekeringan: Sedang</div>
+          <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.6">Rabu VWC diprediksi 26% — di bawah titik layu jagung (PWP). Aktifkan irigasi Selasa malam.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sect-lbl au2">Prediksi Kelembapan 7 Hari — Petak A1</div>
+    <div class="pred-wrap au2">
+      <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:16px;box-shadow:var(--sh)">
+        ${preds.map(p=>`
+        <div class="pred-item">
+          <span class="pi-day">${p.day}</span>
+          <div class="pi-track">
+            <div class="pi-fill" style="width:${p.val}%;background:${p.val<30?'var(--red)':p.val<45?'var(--amber)':'var(--sprout)'}">
+              <span>${p.val}%</span>
+            </div>
+          </div>
+          <span class="pi-ico">${p.ico}</span>
+        </div>`).join('')}
+        <div style="margin-top:10px;font-size:11px;color:var(--ink-4);display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono)">
+          <span>🌧️ Hujan BMKG</span><span>* Irigasi dijadwalkan</span><span>🚨 Kritis</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="sect-lbl au3">Grafik Prediksi + Curah Hujan</div>
+    <div class="chart-card au3">
+      <div class="chart-area" style="height:180px"><canvas id="pred-chart"></canvas></div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="sect-lbl au4">Rekomendasi Sistem</div>
+    <div class="notif-wrap au4">
+      <div class="notif-card nc-crit">
+        <span class="nc-ico">🚨</span>
+        <div>
+          <div class="nc-title">Irigasi darurat A1 — Rabu pagi</div>
+          <div class="nc-body">Model memprediksi VWC 26% → di bawah PWP jagung (30%). Rekomendasi dosis: 120g.</div>
+        </div>
+      </div>
+      <div class="notif-card nc-info">
+        <span class="nc-ico">💡</span>
+        <div>
+          <div class="nc-title">Naikkan dosis A1 menjadi 120g</div>
+          <div class="nc-body">Suhu tanah 34°C mempercepat evaporasi. Hemat 2.1L air dibanding irigasi konvensional.</div>
+        </div>
+      </div>
+      <div class="notif-card nc-ok">
+        <span class="nc-ico">✅</span>
+        <div>
+          <div class="nc-title">Irigasi Jumat malam dibatalkan otomatis</div>
+          <div class="nc-body">Hujan Sabtu 12mm cukup untuk VWC → 55%. Tidak perlu intervensi.</div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer-lg"></div>
+  </div>`;
+
+  setTimeout(()=>{
+    const ctx = $('pred-chart'); if(!ctx) return;
+    const labels=['Hari ini','Besok','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+    const vwc   =[38,32,26,40,37,55,51];
+    chartRefs.pred = new Chart(ctx,{type:'bar',data:{labels,datasets:[
+      {label:'Prediksi VWC (%)',data:vwc,backgroundColor:vwc.map(v=>v<30?'rgba(139,32,32,.7)':v<45?'rgba(146,85,10,.7)':'rgba(46,138,88,.7)'),borderRadius:5,order:2},
+      {label:'Hujan (mm)',data:[0,0,0,0,0,12,0],type:'line',borderColor:'rgba(26,78,122,.7)',borderWidth:2,pointRadius:4,fill:false,yAxisID:'y2',order:1}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{
+      x:{grid:{display:false},ticks:{font:{size:10},color:'#8FA99E'}},
+      y:{min:0,max:80,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10,family:'monospace'},color:'#8FA99E',callback:v=>v+'%'}},
+      y2:{position:'right',min:0,max:30,grid:{display:false},ticks:{font:{size:10,family:'monospace'},color:'rgba(26,78,122,.7)',callback:v=>v+'mm'}}
+    }}});
+  }, 50);
+}
+
+/* ═══════════════════════════════════════
+   PETANI — STOK
+═══════════════════════════════════════ */
+function renderStok(el){
+  const pct = S.stock/5000*100;
+  const days = Math.round(S.stock/133);
+  const barColor = S.stock<1000?'var(--red)':S.stock<2000?'var(--amber)':'var(--sprout)';
+  const stockWarning = S.stock === 0 ? `
+    <div style="margin:0 16px 0;padding:14px 16px;background:var(--red-l);border:1.5px solid #F5C0C0;border-radius:var(--r2);display:flex;align-items:center;gap:10px;margin-bottom:0">
+      <span style="font-size:20px">🚨</span>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#8B2020">Stok Habis!</div>
+        <div style="font-size:12px;color:#8B2020;margin-top:2px">Irigasi otomatis tidak bisa berjalan. Segera isi ulang.</div>
+      </div>
+    </div>` : S.stock < 500 ? `
+    <div style="margin:0 16px 0;padding:12px 16px;background:var(--amber-l);border:1.5px solid #F5D990;border-radius:var(--r2);display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px">⚠️</span>
+      <div style="font-size:12px;font-weight:600;color:#92550A">Stok hampir habis — tersisa ${(S.stock/1000).toFixed(2)} kg</div>
+    </div>` : '';
+
+  el.innerHTML = `
+  <div class="pb-nav">
+    ${stockWarning ? `<div style="padding:16px 0 0">${stockWarning}</div>` : ''}
+    <div class="stok-hero au">
+      <div>
+        <div class="stok-big">${(S.stock/1000).toFixed(1)}<span class="stok-unit">kg</span></div>
+        <div style="margin-top:8px"><span class="pill p-${S.stock<1000?'crit':S.stock<2000?'warn':'ok'}">${S.stock<1000?'Segera isi ulang':S.stock<2000?'Perlu perhatian':'Stok aman'}</span></div>
+      </div>
+      <div class="stok-meta">
+        <div class="stok-days">${days}</div>
+        <div class="stok-lbl">hari tersisa</div>
+        <button class="btn-full btn-green" style="margin-top:10px;padding:10px 14px;font-size:13px;border-radius:var(--r)" onclick="refill()">+ Isi Ulang</button>
+      </div>
+    </div>
+    <div class="stok-bar-wrap au2">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);font-family:var(--mono);margin-bottom:6px">
+        <span>0 kg</span><span style="font-weight:500;color:var(--ink)">${(S.stock/1000).toFixed(1)} kg</span><span>5 kg</span>
+      </div>
+      <div class="stok-bar-bg"><div class="stok-bar-fill" style="width:${pct}%;background:${barColor};--w:${pct}%"></div></div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="sect-div"></div>
+    <div class="sect-lbl au3">Konsumsi per Petak</div>
+    <div style="padding:0 16px" class="au3">
+      <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh)">
+        ${Object.values(S.fields).map((f,i)=>`
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:${i<3?'1px solid var(--bdr)':'none'}">
+          <div style="width:7px;height:7px;border-radius:50%;background:${statusColor(status(f.vwc))};flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:500;color:var(--ink)">${f.id} — ${f.crop}</div>
+            <div style="font-size:11px;color:var(--ink-3);margin-top:1px">${f.dose}g / siklus · ~${Math.round(f.dose/1000*133*2)}/hari</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:15px;font-weight:500;color:var(--ink)">${f.dose}g</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <div class="sect-div"></div>
+    <div class="sect-lbl au4">Tentang Hidrogel Hy-Mupen</div>
+    <div style="padding:0 16px 24px" class="au4">
+      <div style="background:var(--mist);border:1px solid var(--mist-2);border-radius:var(--r2);padding:16px">
+        <div style="font-size:13px;font-weight:600;color:var(--leaf);margin-bottom:8px">Komposisi & Performa</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${[['400×','Swelling capacity'],['67.3%','Silika SiO₂ (rumput gajah)'],['100%','Biodegradable'],['30%','Pati (kulit pisang)']].map(([v,l])=>`
+          <div style="background:white;border-radius:var(--r);padding:10px">
+            <div style="font-family:var(--mono);font-size:18px;font-weight:500;color:var(--leaf)">${v}</div>
+            <div style="font-size:11px;color:var(--ink-3);margin-top:3px">${l}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════
+   PETANI — ATUR
+═══════════════════════════════════════ */
+function renderAtur(el){
+  el.innerHTML = `
+  <div class="pb-nav pad au">
+    <div style="font-size:18px;font-weight:600;color:var(--ink);margin-bottom:16px;font-family:var(--serif)">Pengaturan</div>
+
+    <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);margin-bottom:12px">Threshold Irigasi</div>
+      <div class="rng-block">
+        <div class="rng-hdr"><span>Batas kelembapan bawah (A1)</span><strong id="rv1">35%</strong></div>
+        <input type="range" min="20" max="55" value="35" oninput="$('rv1').textContent=this.value+'%'">
+      </div>
+      <div class="rng-block">
+        <div class="rng-hdr"><span>Suhu aktifasi irigasi</span><strong id="rv2">28°C</strong></div>
+        <input type="range" min="20" max="42" value="28" oninput="$('rv2').textContent=this.value+'°C'">
+      </div>
+      <div class="rng-block" style="margin-bottom:0">
+        <div class="rng-hdr"><span>Interval sensor</span><strong id="rv3">5 mnt</strong></div>
+        <input type="range" min="1" max="30" value="5" oninput="$('rv3').textContent=this.value+' mnt'">
+      </div>
+    </div>
+
+    <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);margin-bottom:4px">Notifikasi</div>
+      ${[['WhatsApp alert kritis','Terima WA saat VWC kritis',true],['SMS backup','SMS jika WA gagal',true],['Prediksi harian','Kirim setiap pagi 06:00',true],['Laporan mingguan','Ringkasan mingguan',false]].map(([l,s,c])=>`
+      <div class="tgl-row"><div class="tgl-info"><div class="tgl-lbl">${l}</div><div class="tgl-sub">${s}</div></div>
+      <label class="tgl"><input type="checkbox" ${c?'checked':''}><div class="tgl-t"></div></label></div>`).join('')}
+    </div>
+
+    <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);margin-bottom:10px">Nomor WA Petani</div>
+      <input type="text" value="+62 812-3456-7890" style="width:100%;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:var(--r);font-size:13px;font-family:var(--mono);color:var(--ink);background:var(--bg);outline:none">
+    </div>
+
+    <button class="btn-full btn-green" onclick="toast('✅ Pengaturan disimpan ke sistem','green')">Simpan Pengaturan</button>
+    <div class="spacer-lg"></div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════
+   PENYULUH PAGES
+═══════════════════════════════════════ */
+function renderRingkasan(el){
+  const fs = Object.values(S.fields);
+  const crit=fs.filter(f=>status(f.vwc)==='crit').length;
+  const warn=fs.filter(f=>status(f.vwc)==='warn').length;
+  const ok  =fs.filter(f=>status(f.vwc)==='ok').length;
+
+  el.innerHTML = `
+  <div class="pb-nav">
+    <div class="peny-stat-row au">
+      <div class="pstat-card" style="--ac:var(--red)"><div class="psc-num" style="color:var(--red)">${crit}</div><div class="psc-lbl">Lahan Kritis</div></div>
+      <div class="pstat-card" style="--ac:var(--amber)"><div class="psc-num" style="color:var(--amber)">${warn}</div><div class="psc-lbl">Perlu Perhatian</div></div>
+      <div class="pstat-card" style="--ac:var(--sprout)"><div class="psc-num" style="color:var(--sprout)">${ok}</div><div class="psc-lbl">Kondisi Baik</div></div>
+      <div class="pstat-card" style="--ac:var(--ink-5)"><div class="psc-num">4</div><div class="psc-lbl">Total Petak</div></div>
+    </div>
+    <div class="sect-div"></div>
+
+    <div class="sect-lbl au2">Status Petak</div>
+    ${fs.map((f,i)=>{
+      const st=status(f.vwc);
+      return `<div style="display:flex;align-items:center;gap:14px;padding:14px ${window.innerWidth>720?'28px':'16px'};border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .12s" class="au${i+2}" onmouseover="this.style.background='var(--mist)'" onmouseout="this.style.background=''" onclick="openFieldSheet('${f.id}')">
+        <div style="width:46px;height:46px;border-radius:12px;background:${st==='ok'?'var(--mist)':st==='warn'?'var(--amber-l)':'var(--red-l)'};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${st==='ok'?'✅':st==='warn'?'⚠️':'🚨'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600;color:var(--ink)">Petak ${f.id} — ${f.crop}</div>
+          <div style="font-size:11px;color:var(--ink-3);margin-top:2px">${f.loc} · ${f.node} · Suhu ${f.temp}°C</div>
+          <div style="height:3px;background:var(--bg2);border-radius:2px;margin-top:8px;overflow:hidden;max-width:240px"><div style="height:3px;width:${f.vwc}%;background:${vColor(f.vwc)};border-radius:2px"></div></div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-family:var(--mono);font-size:24px;font-weight:500;color:${vColor(f.vwc)};line-height:1">${f.vwc.toFixed(0)}<span style="font-size:13px;color:var(--ink-3)">%</span></div>
+          <span class="pill p-${st}" style="margin-top:6px">${statusLabel(st)}</span>
+        </div>
+      </div>`;
+    }).join('')}
+
+    <div class="spacer"></div>
+    <div class="sect-lbl au5">Tren VWC Semua Petak</div>
+    <div class="chart-card au5">
+      <div class="chart-area" style="height:200px"><canvas id="peny-chart"></canvas></div>
+    </div>
+    <div class="spacer-lg"></div>
+  </div>`;
+
+  setTimeout(()=>{
+    const ctx=$('peny-chart'); if(!ctx) return;
+    const days=['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+    chartRefs.peny = new Chart(ctx,{type:'line',data:{labels:days,datasets:[
+      {label:'A1 Jagung', data:[55,52,48,44,40,38,38],borderColor:'#2E8A58',borderWidth:2,pointRadius:2,tension:.3,fill:false},
+      {label:'A2 Kedelai',data:[60,58,56,54,53,52,52],borderColor:'#92550A', borderWidth:2,pointRadius:2,tension:.3,fill:false},
+      {label:'B1 Cabai',  data:[45,42,38,35,31,29,28],borderColor:'#8B2020',   borderWidth:2,pointRadius:2,tension:.3,fill:false},
+      {label:'B2 Tomat',  data:[68,66,65,64,63,62,61],borderColor:'#1A4E7A',   borderWidth:2,pointRadius:2,tension:.3,fill:false},
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{
+      x:{grid:{display:false},ticks:{font:{size:10},color:'#8FA99E'}},
+      y:{min:15,max:80,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10,family:'monospace'},color:'#8FA99E',callback:v=>v+'%'}}
+    }}});
+  },50);
+}
+
+function renderPetaniList(el){
+  const list=[
+    {name:'Pak Slamet',loc:'Ds. Tambak Agung, Sampang',fields:'A1, A2',st:'warn',av:'🧑‍🌾'},
+    {name:'Bu Romlah', loc:'Ds. Omben, Sampang',       fields:'B1',     st:'crit',av:'👩‍🌾'},
+    {name:'Pak Harun', loc:'Ds. Banyuates, Sampang',   fields:'B2',     st:'ok',  av:'🧑‍🌾'},
+    {name:'Bu Fatimah',loc:'Ds. Jrengik, Sampang',     fields:'C1, C2', st:'ok',  av:'👩‍🌾'},
+  ];
+  el.innerHTML = `
+  <div class="pb-nav">
+    <div class="sect-lbl au">Petani Binaan (${list.length} orang)</div>
+    ${list.map((p,i)=>`
+    <div class="petani-item au${i+2}">
+      <div class="pi-avatar">${p.av}</div>
+      <div class="pi-info">
+        <div class="pi-name">${p.name}</div>
+        <div class="pi-loc">${p.loc}</div>
+        <div class="pi-fields">Lahan: ${p.fields}</div>
+      </div>
+      <div class="pi-right">
+        <div class="status-ring ${p.st}"></div>
+        <span class="pill p-${p.st}">${statusLabel(p.st)}</span>
+      </div>
+    </div>`).join('')}
+    <div class="spacer-lg"></div>
+  </div>`;
+}
+
+function renderLaporan(el){
+  el.innerHTML = `
+  <div class="pb-nav pad au">
+    <div style="font-size:18px;font-weight:600;font-family:var(--serif);color:var(--ink);margin-bottom:16px">Laporan Bulanan</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      ${[['67%','var(--sprout)','Efisiensi Air','vs irigasi konvensional'],['255g','var(--ink)','Hidrogel/pekan','rata-rata semua petak'],['87.3%','var(--sky)','Akurasi Model','prediksi LSTM v1.4'],['Rp 87k','var(--amber)','Hemat/petak','per bulan']].map(([v,c,l,s])=>`
+      <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r2);padding:14px;box-shadow:var(--sh)">
+        <div style="font-family:var(--mono);font-size:26px;font-weight:500;color:${c}">${v}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--ink);margin-top:5px">${l}</div>
+        <div style="font-size:11px;color:var(--ink-3)">${s}</div>
+      </div>`).join('')}
+    </div>
+    <div class="chart-card">
+      <div class="cc-hdr"><div class="cc-title">Penggunaan Hidrogel per Minggu</div></div>
+      <div class="chart-area"><canvas id="lap-chart"></canvas></div>
+    </div>
+    <div class="spacer-lg"></div>
+  </div>`;
+
+  setTimeout(()=>{
+    const ctx=$('lap-chart'); if(!ctx) return;
+    chartRefs.lap = new Chart(ctx,{type:'bar',data:{labels:['Minggu 1','Minggu 2','Minggu 3','Minggu 4'],datasets:[
+      {label:'A1',data:[1.1,1.2,1.15,1.2],backgroundColor:'rgba(46,138,88,.7)',borderRadius:4},
+      {label:'A2',data:[.85,.85,.87,.85], backgroundColor:'rgba(146,85,10,.7)',borderRadius:4},
+      {label:'B1',data:[.84,1.1,1.2,1.4], backgroundColor:'rgba(139,32,32,.7)',borderRadius:4},
+      {label:'B2',data:[.49,.49,.49,.49], backgroundColor:'rgba(26,78,122,.7)',borderRadius:4},
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{
+      x:{stacked:true,grid:{display:false},ticks:{font:{size:10}}},
+      y:{stacked:true,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10,family:'monospace'},callback:v=>v+'kg'}}
+    }}});
+  },50);
+}
+
+/* ═══════════════════════════════════════
+   DEV PAGES
+═══════════════════════════════════════ */
+function renderDevSistem(el){
+  el.innerHTML = `<div class="dev-shell">
+  <div class="dev-grid">
+    <div class="dev-panel">
+      <div class="dp-title">System Status</div>
+      ${[['MQTT Broker','Connected · 42ms','ok'],['FastAPI','200 OK · v2.3','ok'],['TimescaleDB','Online · 1.8GB','ok'],['ML Model','LSTM v1.4 loaded','ok'],['BMKG API','Sync 7min ago','ok'],['Uptime','14d 6h 32m','dim']].map(([k,v,c])=>`<div class="dp-row"><span class="dk">${k}</span><span class="dv ${c}">${v}</span></div>`).join('')}
+    </div>
+    <div class="dev-panel">
+      <div class="dp-title">Live Sensors</div>
+      ${Object.values(S.fields).map(f=>[
+        [f.id+':vwc', f.vwc.toFixed(2)+'%', status(f.vwc)],
+        [f.id+':temp', f.temp+'°C', 'dim'],
+        [f.id+':batt', f.batt+'%', f.batt<40?'warn':f.batt<60?'dim':'ok'],
+      ].map(([k,v,c])=>`<div class="dp-row"><span class="dk">${k}</span><span class="dv ${c}" id="ddev-${k.replace(':','-')}">${v}</span></div>`).join('')).join('')}
+    </div>
+    <div class="dev-panel">
+      <div class="dp-title">IoT Nodes</div>
+      ${[['ESP-001 (A1)','WiFi · -52dBm · 91%','ok'],['ESP-002 (A2)','WiFi · -61dBm · 78%','ok'],['LoRa-001 (B1)','SF9 BW125 · SNR +11 · 65%','ok'],['LoRa-002 (B2)','SF9 BW125 · SNR +9 · 34%','warn'],['Gateway','8ch · Sampang · online','ok']].map(([k,v,c])=>`<div class="dp-row"><span class="dk">${k}</span><span class="dv ${c}">${v}</span></div>`).join('')}
+    </div>
+    <div class="dev-panel">
+      <div class="dp-title">ML Engine</div>
+      ${[['Model','LSTM 2-layer','dim'],['Accuracy','87.3% validation','ok'],['A1 threshold','35.0% VWC','dim'],['A2 threshold','42.0% VWC','dim'],['B1 threshold','38.0% VWC (!)','crit'],['Last calib','07:35 WIB','dim']].map(([k,v,c])=>`<div class="dp-row"><span class="dk">${k}</span><span class="dv ${c}">${v}</span></div>`).join('')}
+    </div>
+    <div class="dev-panel span2">
+      <div class="dp-title">Live Log</div>
+      <div class="dev-log" id="dev-log-el">
+        ${[['07:42','s','A1 VWC=38.0% TEMP=34.2C BATT=91% SNR=+12'],['07:42','s','B1 VWC=28.1% TEMP=33.8C BATT=65% SNR=+11'],['07:35','m','LSTM A1 threshold recalc: 36.5→35.0 VWC'],['07:30','m','BMKG sync OK: rain Sat 12mm → cancel Fri irrig'],['07:15','e','ALERT B1: VWC=28.1 < PWP(30%) → emergency irrig'],['07:15','a','Actuator B1: stepper 120g 6m10s OK'],['07:00','a','Schedule A2: 85g 4m30s OK · VWC 49→52%'],['06:30','s','All 4 nodes online. LoRa-002 batt=34% ⚠️']].map(([t,c,m])=>`<div class="log-line"><span class="lt">${t}</span><span class="lt-tag lt-${c}">${{s:'SNS',a:'ACT',m:'ML',e:'ERR'}[c]}</span><span class="lm">${m}</span></div>`).join('')}
+      </div>
+    </div>
+  </div></div>`;
+}
+
+function renderDevSensor(el){
+  el.innerHTML = `<div class="dev-shell">
+  <div class="dev-grid">
+    <div class="dev-panel span2">
+      <div class="dp-title">VWC Trend — All Fields (24h)</div>
+      <div style="height:200px"><canvas id="dev-trend"></canvas></div>
+    </div>
+    ${Object.values(S.fields).map(f=>`
+    <div class="dev-panel">
+      <div class="dp-title">${f.id} · ${f.crop}</div>
+      ${[['VWC',f.vwc.toFixed(2)+'%',status(f.vwc)],['Threshold',f.thr+'%','dim'],['Delta',((f.vwc-f.thr)>=0?'+':'')+(f.vwc-f.thr).toFixed(1)+'%',f.vwc<f.thr?'crit':'ok'],['Temp',f.temp+'°C','dim'],['Dose',f.dose+'g','dim'],['Batt',f.batt+'%',f.batt<40?'crit':f.batt<60?'warn':'ok'],['Node',f.node,'dim']].map(([k,v,c])=>`<div class="dp-row"><span class="dk">${k}</span><span class="dv ${c}">${v}</span></div>`).join('')}
+    </div>`).join('')}
+  </div></div>`;
+  setTimeout(()=>{
+    const ctx=$('dev-trend'); if(!ctx) return;
+    const h=Array.from({length:9},(_,i)=>(6+i*2)+'h');
+    chartRefs.devt = new Chart(ctx,{type:'line',data:{labels:h,datasets:[
+      {label:'A1',data:[55,52,48,44,40,38,38,37.5,38],borderColor:'#5BB88A',borderWidth:1.5,pointRadius:2,fill:false,tension:.3},
+      {label:'A2',data:[60,58,56,54,53,52,52,52,52.3],borderColor:'#F4C84A',borderWidth:1.5,pointRadius:2,fill:false,tension:.3},
+      {label:'B1',data:[45,42,38,35,31,29,28,28.1,28.1],borderColor:'#FF6B6B',borderWidth:1.5,pointRadius:2,fill:false,tension:.3},
+      {label:'B2',data:[68,66,65,64,63,62,61,61,61],borderColor:'#6AADEE',borderWidth:1.5,pointRadius:2,fill:false,tension:.3},
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9ABDA8',font:{size:10},boxWidth:10}}},scales:{
+      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#6B9278',font:{size:10,family:'monospace'}}},
+      y:{min:15,max:75,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#6B9278',font:{size:10,family:'monospace'},callback:v=>v+'%'}}
+    }}});
+  },50);
+}
+
+function renderDevLog(el){
+  const entries=[
+    ['07:42','s','A1 VWC=38.0% TEMP=34.2C BATT=91% SNR=+12dB'],
+    ['07:42','s','A2 VWC=52.3% TEMP=32.1C BATT=78%'],
+    ['07:42','s','B1 VWC=28.1% TEMP=33.8C BATT=65% SNR=+11dB'],
+    ['07:42','s','B2 VWC=61.0% TEMP=31.5C BATT=34% ⚠️'],
+    ['07:35','m','LSTM A1 threshold recalc: 36.5→35.0 VWC (epoch#1441)'],
+    ['07:30','m','BMKG sync success: rain Sat 06:00 12mm → cancel Fri irrig schedule'],
+    ['07:15','e','CRITICAL B1: VWC=28.1 < PWP(30%) → emergency protocol'],
+    ['07:15','a','Actuator B1: stepper motor ON · 120g dispensed · 6m10s · OK'],
+    ['07:00','a','Schedule exec: A2 irrig 85g 4m30s OK · VWC 49→52%'],
+    ['06:30','s','All 4 nodes online. LoRa-002 batt=34% → admin alert sent'],
+    ['06:00','m','Daily schedule started. Predictions updated. Risk: MEDIUM'],
+    ['05:50','m','LSTM inference: A1 pred=[38,32,26,40,37,55,51]%'],
+  ];
+  el.innerHTML = `<div class="dev-shell">
+  <div style="padding:14px">
+    <div class="dp-title">Full System Log · ${entries.length} entries</div>
+    <div class="dev-log" style="max-height:calc(100dvh - 180px)">
+      ${entries.map(([t,c,m])=>`<div class="log-line"><span class="lt">${t}</span><span class="lt-tag lt-${c}">${{s:'SNS',a:'ACT',m:'ML',e:'ERR'}[c]}</span><span class="lm">${m}</span></div>`).join('')}
+    </div>
+  </div></div>`;
+}
+
+function renderDevConfig(el){
+  el.innerHTML=`<div class="dev-shell">
+  <div class="dev-grid">
+    <div class="dev-panel">
+      <div class="dp-title">Field Config</div>
+      ${Object.values(S.fields).map(f=>[
+        [f.id+':thr',f.thr+'%','dim'],[f.id+':dose',f.dose+'g','dim']
+      ].map(([k,v,c])=>`<div class="dp-row"><span class="dk">${k}</span><span class="dv ${c}">${v}</span></div>`).join('')).join('')}
+    </div>
+    <div class="dev-panel">
+      <div class="dp-title">System Config</div>
+      ${[['sensor_interval','5 min'],['ml_recalib','6h'],['bmkg_sync','30min'],['alert_wa','enabled'],['adaptive_thr','ON'],['tinyml_esp','ON'],['lorawan_sf','SF9'],['mqtt_qos','1']].map(([k,v])=>`<div class="dp-row"><span class="dk">${k}</span><span class="dv dim">${v}</span></div>`).join('')}
+    </div>
+    <div class="dev-panel">
+      <div class="dp-title">Hardware Info</div>
+      ${[['MCU A1/A2','ESP32 WROOM-32D'],['MCU B1/B2','Heltec LoRa v3'],['Sensor type','Capacitive VWC'],['Temp sensor','DS18B20 WP'],['Gateway','8ch LoRaWAN'],['MQTT','HiveMQ Cloud'],['DB','TimescaleDB 2.x'],['API','FastAPI 0.110']].map(([k,v])=>`<div class="dp-row"><span class="dk">${k}</span><span class="dv dim">${v}</span></div>`).join('')}
+    </div>
+  </div></div>`;
+}
+
+
+/* ═══════════════════════════════════════
+   AI ASSISTANT — renderAI + engine
+═══════════════════════════════════════ */
+
+// ── Chat history per session
+const chatHistory = [];
+let aiTyping = false;
+
+// ── Role-specific quick prompts
+const AI_PROMPTS = {
+  petani: [
+    'Analisis kondisi lahan saya sekarang',
+    'Berapa dosis hidrogel yang tepat?',
+    'Kapan waktu terbaik untuk irigasi?',
+    'Kenapa tanaman saya layu?',
+    'Prediksi kekeringan minggu ini',
+    'Tips hemat air untuk jagung',
+  ],
+  penyuluh: [
+    'Rangkum kondisi semua petani binaan',
+    'Siapa petani yang perlu dibantu hari ini?',
+    'Analisis efisiensi penggunaan hidrogel',
+    'Rekomendasi jadwal kunjungan lapangan',
+    'Buat laporan kondisi lahan minggu ini',
+  ],
+  dev: [
+    'Analisis anomali sensor hari ini',
+    'Performa model LSTM saat ini',
+    'Rekomendasi kalibrasi threshold',
+    'Status kesehatan semua node IoT',
+    'Optimasi parameter sistem',
+  ],
+};
+
+// ── Build system prompt berdasarkan state aktual
+function buildSystemPrompt() {
+  const fs = Object.values(S.fields);
+  const fieldSummary = fs.map(f =>
+    `Petak ${f.id} (${f.crop}): VWC=${f.vwc.toFixed(1)}%, Suhu=${f.temp}°C, Status=${f.vwc<30?'KRITIS':f.vwc<45?'PERHATIAN':'BAIK'}, Threshold=${f.thr}%, Dosis=${f.dose}g`
+  ).join('\n');
+
+  const roleCtx = {
+    petani: `Kamu berbicara dengan seorang petani di Madura, Indonesia. Gunakan bahasa yang sederhana, ramah, dan mudah dipahami. Hindari istilah teknis yang berlebihan. Fokus pada tindakan praktis yang bisa langsung dilakukan petani.`,
+    penyuluh: `Kamu berbicara dengan seorang penyuluh pertanian yang membina beberapa petani. Berikan analisis yang lebih teknis dan komprehensif. Sertakan rekomendasi untuk tindakan pembinaan.`,
+    dev: `Kamu berbicara dengan developer/admin sistem IoT HyMupen. Berikan analisis teknis mendalam, termasuk data sensor, performa model ML, dan rekomendasi optimasi sistem.`,
+  }[ROLE] || '';
+
+  return `Kamu adalah HyMupen AI, asisten cerdas untuk sistem irigasi hidrogel alami berbasis IoT di lahan kering Madura, Indonesia.
+
+${roleCtx}
+
+DATA LAHAN REAL-TIME SAAT INI:
+${fieldSummary}
+
+Stok hidrogel: ${(S.stock/1000).toFixed(2)} kg (${Math.round(S.stock/133)} hari tersisa)
+Petak aktif dipantau: ${S.sel}
+Waktu: ${new Date().toLocaleString('id-ID', {timeZone:'Asia/Jakarta'})} WIB
+
+KONTEKS PRODUK:
+- Hidrogel Hy-Mupen dibuat dari limbah rumput gajah (Pennisetum purpureum, silika 67.3%) dan kulit pisang (Musa paradisiaca, pati 30%)
+- Kapasitas swelling 400× berat kering, 100% biodegradable
+- Sistem IoT: ESP32/LoRaWAN → MQTT → FastAPI → TimescaleDB
+- Model LSTM untuk threshold adaptif dan prediksi kekeringan
+
+INSTRUKSI:
+- Jawab dalam Bahasa Indonesia
+- Sertakan data aktual dari sensor saat relevan
+- Berikan rekomendasi yang spesifik dan actionable
+- Jika ada lahan kritis, prioritaskan dalam jawaban
+- Format jawaban dengan ringkas dan terstruktur`;
+}
+
+// ── Render AI page
+function renderAI(el) {
+  const prompts = AI_PROMPTS[ROLE] || AI_PROMPTS.petani;
+  const roleName = {petani:'Asisten Tani', penyuluh:'Asisten Penyuluh', dev:'Asisten Dev'}[ROLE];
+  const roleIcon = {petani:'🌱', penyuluh:'📊', dev:'⚙️'}[ROLE];
+
+  el.innerHTML = `
+  <div class="ai-shell" id="ai-shell">
+    <!-- Header -->
+    <div class="ai-hdr">
+      <div class="ai-hdr-top">
+        <div class="ai-avatar">${roleIcon}</div>
+        <div class="ai-hdr-info">
+          <div class="ai-name">HyMupen AI — ${roleName}</div>
+          <div class="ai-status">
+            <div class="ai-status-dot"></div>
+            <span>Terhubung · Data lahan real-time aktif</span>
+          </div>
+        </div>
+        <button onclick="clearChat()" style="margin-left:auto;border:none;background:none;font-size:11px;color:var(--ink-3);cursor:pointer;font-family:var(--sans);padding:4px 8px;border-radius:6px;transition:.15s" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='none'">Hapus chat</button>
+      </div>
+      <div class="quick-prompts" id="quick-prompts">
+        ${prompts.map(p => `<button class="qp-btn" onclick="sendQuick('${p.replace(/'/g, "\\'")}')">${p}</button>`).join('')}
+      </div>
+    </div>
+
+    <!-- Analysis chips -->
+    <div class="ai-analysis-bar">
+      <div class="analysis-chip" onclick="runAnalysis('lahan')">
+        <span class="ac-icon">🗺️</span>
+        <span class="ac-label">Analisis Lahan</span>
+        <span class="ac-sub">Kondisi semua petak</span>
+      </div>
+      <div class="analysis-chip" onclick="runAnalysis('irigasi')">
+        <span class="ac-icon">💧</span>
+        <span class="ac-label">Jadwal Irigasi</span>
+        <span class="ac-sub">Rekomendasi optimal</span>
+      </div>
+      <div class="analysis-chip" onclick="runAnalysis('hidrogel')">
+        <span class="ac-icon">🧪</span>
+        <span class="ac-label">Dosis Hidrogel</span>
+        <span class="ac-sub">Per petak & tanaman</span>
+      </div>
+      <div class="analysis-chip" onclick="runAnalysis('risiko')">
+        <span class="ac-icon">⚠️</span>
+        <span class="ac-label">Risiko Kekeringan</span>
+        <span class="ac-sub">Prediksi 7 hari</span>
+      </div>
+      <div class="analysis-chip" onclick="runAnalysis('efisiensi')">
+        <span class="ac-icon">📈</span>
+        <span class="ac-label">Efisiensi Air</span>
+        <span class="ac-sub">vs konvensional</span>
+      </div>
+    </div>
+
+    <!-- Chat messages -->
+    <div class="chat-scroll" id="chat-scroll">
+      ${chatHistory.length === 0 ? renderWelcome() : chatHistory.map(renderMsg).join('')}
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input-wrap">
+      <div class="chat-input-row">
+        <textarea
+          class="chat-input"
+          id="chat-input"
+          placeholder="Tanya tentang lahan, irigasi, hidrogel..."
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="chat-send" id="chat-send" onclick="sendMessage()" title="Kirim">
+          ➤
+        </button>
+      </div>
+    </div>
+  </div>`;
+
+  // Scroll to bottom if there's history
+  setTimeout(() => scrollChat(), 50);
+}
+
+function renderWelcome() {
+  const crit = Object.values(S.fields).filter(f => f.vwc < 30);
+  const warn = Object.values(S.fields).filter(f => f.vwc >= 30 && f.vwc < 45);
+  const greet = {
+    petani: `Halo! Saya HyMupen AI, siap membantu Anda merawat lahan. 🌱`,
+    penyuluh: `Selamat datang! Saya siap membantu analisis kondisi petani binaan Anda.`,
+    dev: `System online. HyMupen AI ready. Monitoring 4 nodes active.`,
+  }[ROLE];
+
+  let statusNote = '';
+  if (crit.length > 0) {
+    statusNote = `<div class="ai-warn-card">🚨 <strong>Perhatian:</strong> ${crit.map(f=>`Petak ${f.id} (${f.crop})`).join(', ')} dalam kondisi kritis (VWC &lt; 30%). Segera tindak lanjuti.</div>`;
+  } else if (warn.length > 0) {
+    statusNote = `<div class="ai-rec">⚠️ Petak ${warn.map(f=>f.id).join(', ')} perlu perhatian. Klik <em>Analisis Lahan</em> untuk detail.</div>`;
+  } else {
+    statusNote = `<div class="ai-rec">✅ Semua lahan dalam kondisi baik saat ini.</div>`;
+  }
+
+  return `<div class="msg ai"><div class="msg-avatar">🌱</div><div><div class="msg-bubble">${greet}${statusNote}<div style="margin-top:8px;font-size:12px;color:var(--ink-3)">Gunakan tombol analisis di atas atau ketik pertanyaan langsung.</div></div></div></div>`;
+}
+
+function renderMsg(m) {
+  const time = new Date(m.ts).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit', timeZone:'Asia/Jakarta'});
+  if (m.role === 'user') {
+    return `<div class="msg user"><div class="msg-avatar">👤</div><div><div class="msg-bubble">${escHtml(m.content)}</div><div class="msg-time">${time}</div></div></div>`;
+  }
+  return `<div class="msg ai"><div class="msg-avatar">🌱</div><div><div class="msg-bubble">${m.content}</div><div class="msg-time">${time}</div></div></div>`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Scroll chat to bottom
+function scrollChat() {
+  const cs = $('chat-scroll');
+  if (cs) cs.scrollTop = cs.scrollHeight;
+}
+
+// ── Auto-resize textarea
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// ── Handle Enter key
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+// ── Send quick prompt
+function sendQuick(text) {
+  const inp = $('chat-input');
+  if (inp) { inp.value = text; autoResize(inp); }
+  sendMessage();
+}
+
+// ── Run preset analysis
+function runAnalysis(type) {
+  const queries = {
+    lahan:    'Analisis kondisi semua petak lahan saya saat ini secara lengkap. Mana yang paling butuh perhatian?',
+    irigasi:  'Berikan jadwal irigasi yang optimal untuk semua petak minggu ini berdasarkan kondisi sensor saat ini.',
+    hidrogel: 'Berapa dosis hidrogel yang tepat untuk setiap petak dan tanaman? Pertimbangkan kondisi tanah saat ini.',
+    risiko:   'Analisis risiko kekeringan 7 hari ke depan untuk semua petak. Tindakan apa yang harus saya ambil?',
+    efisiensi:'Berapa efisiensi penggunaan air sistem HyMupen dibanding irigasi konvensional saat ini? Berapa penghematan biaya?',
+  };
+  sendQuick(queries[type] || '');
+}
+
+// ── Clear chat
+function clearChat() {
+  chatHistory.length = 0;
+  const cs = $('chat-scroll');
+  if (cs) { cs.innerHTML = renderWelcome(); }
+}
+
+// ── Main send function
+async function sendMessage() {
+  if (aiTyping) return;
+  const inp = $('chat-input');
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) return;
+
+  // Clear input
+  inp.value = '';
+  inp.style.height = 'auto';
+
+  // Add user message to history + DOM
+  const userMsg = { role: 'user', content: text, ts: Date.now() };
+  chatHistory.push(userMsg);
+  appendMsg(renderMsg(userMsg));
+
+  // Disable send
+  aiTyping = true;
+  const sendBtn = $('chat-send');
+  if (sendBtn) sendBtn.disabled = true;
+
+  // Show thinking indicator
+  const thinkId = 'think-' + Date.now();
+  appendMsg(`<div class="msg ai msg-thinking" id="${thinkId}">
+    <div class="msg-avatar">🌱</div>
+    <div class="msg-bubble">
+      <span style="font-size:12px;color:var(--ink-3)">HyMupen AI sedang menganalisis</span>
+      <div class="think-dots"><span></span><span></span><span></span></div>
+    </div>
+  </div>`);
+
+  try {
+    // Build messages for API
+    const messages = [
+      // Include last 6 exchanges for context
+      ...chatHistory.slice(-13, -1).map(m => ({
+        role: m.role,
+        content: m.content
+      })),
+      { role: 'user', content: text }
+    ];
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: buildSystemPrompt(),
+        messages,
+      })
+    });
+
+    const data = await res.json();
+
+    // Remove thinking
+    const thinkEl = $(thinkId);
+    if (thinkEl) thinkEl.remove();
+
+    if (data.content && data.content[0]) {
+      const rawText = data.content.map(c => c.text || '').join('');
+      const formatted = formatAIResponse(rawText);
+      const aiMsg = { role: 'assistant', content: formatted, ts: Date.now() };
+      chatHistory.push(aiMsg);
+      appendMsg(renderMsg(aiMsg));
+    } else if (data.error) {
+      throw new Error(data.error.message || 'API error');
+    }
+  } catch (err) {
+    const thinkEl = $(thinkId);
+    if (thinkEl) thinkEl.remove();
+
+    // Graceful fallback — still useful without API key
+    const fallback = getFallbackResponse(text);
+    const fbMsg = { role: 'assistant', content: fallback, ts: Date.now() };
+    chatHistory.push(fbMsg);
+    appendMsg(renderMsg(fbMsg));
+    console.warn('AI API error (fallback used):', err.message);
+  }
+
+  aiTyping = false;
+  if (sendBtn) sendBtn.disabled = false;
+  scrollChat();
+
+  // Refocus input
+  setTimeout(() => { const inp2 = $('chat-input'); if(inp2) inp2.focus(); }, 50);
+}
+
+// ── Append message HTML to chat scroll
+function appendMsg(html) {
+  const cs = $('chat-scroll');
+  if (!cs) return;
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  while (div.firstChild) cs.appendChild(div.firstChild);
+  scrollChat();
+}
+
+// ── Format AI response: markdown-ish → HTML
+function formatAIResponse(text) {
+  return text
+    // Bold **text**
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // Headers ### → styled
+    .replace(/^###\s+(.+)$/gm, '<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);margin:10px 0 4px">$1</div>')
+    .replace(/^##\s+(.+)$/gm,  '<div style="font-size:13px;font-weight:700;color:var(--ink);margin:10px 0 5px">$1</div>')
+    // Bullet lists
+    .replace(/^[-•]\s+(.+)$/gm, '<div style="display:flex;gap:6px;margin:3px 0"><span style="color:#2E8A58;flex-shrink:0">•</span><span>$1</span></div>')
+    // Numbered lists
+    .replace(/^(\d+)\.\s+(.+)$/gm, '<div style="display:flex;gap:6px;margin:3px 0"><span style="font-family:var(--mono);color:var(--ink-3);flex-shrink:0;min-width:16px">$1.</span><span>$2</span></div>')
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code style="background:var(--bg2);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:11px">$1</code>')
+    // Line breaks
+    .replace(/\n\n+/g, '<br><br>')
+    .replace(/\n/g, '<br>')
+    .trim();
+}
+
+// ── Fallback responses when API unavailable
+function getFallbackResponse(query) {
+  const fs = Object.values(S.fields);
+  const crit = fs.filter(f => f.vwc < 30);
+  const warn = fs.filter(f => f.vwc >= 30 && f.vwc < 45);
+  const q = query.toLowerCase();
+
+  if (q.includes('analisis') || q.includes('kondisi') || q.includes('lahan')) {
+    const rows = fs.map(f => {
+      const st = f.vwc<30?'🚨 KRITIS':f.vwc<45?'⚠️ Perhatian':'✅ Baik';
+      return `<div class="ai-card-row"><span class="ai-card-key">${f.id} — ${f.crop}</span><span class="ai-card-val">${f.vwc.toFixed(1)}% ${st}</span></div>`;
+    }).join('');
+    let rec = '';
+    if (crit.length) rec = `<div class="ai-warn-card">🚨 <strong>Tindakan segera:</strong> Petak ${crit.map(f=>f.id).join(', ')} kritis. Aktifkan irigasi sekarang dengan dosis ${crit[0].dose}g.</div>`;
+    else if (warn.length) rec = `<div class="ai-rec">💡 Petak ${warn.map(f=>f.id).join(', ')} mendekati threshold. Siapkan irigasi dalam 2–3 jam ke depan.</div>`;
+    else rec = `<div class="ai-rec">✅ Semua petak dalam kondisi normal. Lanjutkan jadwal rutin.</div>`;
+    return `<strong>Analisis Kondisi Lahan</strong><div class="ai-card"><div class="ai-card-title">Status Real-Time</div>${rows}</div>${rec}`;
+  }
+
+  if (q.includes('dosis') || q.includes('hidrogel')) {
+    const rows = fs.map(f => `<div class="ai-card-row"><span class="ai-card-key">${f.id} — ${f.crop}</span><span class="ai-card-val">${f.vwc < f.thr ? f.dose + 20 : f.dose}g ${f.vwc < f.thr ? '(+20g darurat)':''}</span></div>`).join('');
+    return `<strong>Rekomendasi Dosis Hidrogel</strong><div class="ai-card"><div class="ai-card-title">Per Petak</div>${rows}</div><div class="ai-rec">💡 Dosis dinaikkan 20g untuk petak di bawah threshold. Suhu tanah &gt;33°C mempercepat evaporasi, sesuaikan dosis saat musim panas.</div>`;
+  }
+
+  if (q.includes('irigasi') || q.includes('siram') || q.includes('jadwal')) {
+    const needNow = fs.filter(f => f.vwc < f.thr);
+    const needSoon = fs.filter(f => f.vwc < f.thr + 8 && f.vwc >= f.thr);
+    let resp = '<strong>Jadwal Irigasi Optimal</strong>';
+    if (needNow.length) resp += `<div class="ai-warn-card">🚨 <strong>Segera diirigasi:</strong> ${needNow.map(f=>`Petak ${f.id} (${f.vwc.toFixed(0)}% &lt; threshold ${f.thr}%)`).join(', ')}</div>`;
+    if (needSoon.length) resp += `<div class="ai-rec">⏰ <strong>Dalam 2–4 jam:</strong> ${needSoon.map(f=>`Petak ${f.id}`).join(', ')} mendekati threshold.</div>`;
+    if (!needNow.length && !needSoon.length) resp += `<div class="ai-rec">✅ Tidak ada irigasi mendesak. Jadwal otomatis berjalan normal.</div>`;
+    return resp;
+  }
+
+  if (q.includes('risiko') || q.includes('kekeringan') || q.includes('prediksi')) {
+    return `<strong>Analisis Risiko Kekeringan</strong><div class="ai-rec">📊 Berdasarkan tren saat ini:<br><br>• <strong>Petak A1 (Jagung)</strong>: Risiko tinggi — VWC turun ~0.08%/jam. Rabu diprediksi 26% (kritis).<br>• <strong>Petak B1 (Cabai)</strong>: Sudah kritis — 28% VWC, di bawah PWP.<br>• <strong>Petak A2, B2</strong>: Aman untuk 5–7 hari ke depan.<br><br>Hujan diprediksi Sabtu 12mm — cukup untuk A1 dan A2.</div>`;
+  }
+
+  if (q.includes('efisiensi') || q.includes('hemat') || q.includes('biaya')) {
+    return `<strong>Efisiensi Sistem HyMupen</strong><div class="ai-card"><div class="ai-card-title">Perbandingan</div><div class="ai-card-row"><span class="ai-card-key">Air dipakai/hari</span><span class="ai-card-val">4.2 L</span></div><div class="ai-card-row"><span class="ai-card-key">Konvensional</span><span class="ai-card-val">12.7 L</span></div><div class="ai-card-row"><span class="ai-card-key">Efisiensi</span><span class="ai-card-val">67%</span></div><div class="ai-card-row"><span class="ai-card-key">Hemat/bulan</span><span class="ai-card-val">Rp 87.000</span></div></div><div class="ai-rec">💰 Dalam 1 musim tanam (4 bulan), penghematan diperkirakan <strong>Rp 348.000/petak</strong> dibanding irigasi tetes konvensional.</div>`;
+  }
+
+  // Generic fallback
+  return `Saya menerima pertanyaan Anda tentang "<em>${escHtml(query)}</em>".<br><br><div class="ai-rec">💡 Untuk mendapatkan analisis AI penuh, pastikan koneksi internet aktif. Sementara itu, gunakan tombol analisis cepat di atas untuk insight berdasarkan data sensor real-time.</div>`;
+}
+
+/* ═══════════════ ACTIONS ══════════════ */
+function showIrrSheet(fieldId){
+  const f = S.fields[fieldId];
+  $('irr-field-name').textContent = `${f.id} — ${f.crop}`;
+  $('irr-field-vwc').textContent  = `Kelembapan saat ini: ${f.vwc.toFixed(1)}% VWC`;
+  $('irr-dose').textContent = f.dose+' g';
+  openSheet('sh-irr');
+}
+
+function doIrr(){
+  closeSheet('sh-irr');
+  const dose = S.fields[S.sel].dose;
+  S.stock = Math.max(0, S.stock - dose);
+  
+  // Update main CTA button state
+  const btn = $('irr-main-btn');
+  if(btn){
+    btn.className = 'irr-btn irr-running';
+    btn.innerHTML = `<div class="irr-ico">⏳</div><div class="irr-body"><div class="irr-title">Mendistribusikan Hidrogel...</div><div class="irr-sub">Jangan matikan sistem</div></div>`;
+    btn.onclick = null;
+  }
+  toast('💧 Irigasi aktif — distribusi '+dose+'g hidrogel');
+
+  // Progress simulation
+  let secs = 0;
+  const total = 270; // ~4.5 minutes simulated as 9 seconds
+  const prog = setInterval(()=>{
+    secs++;
+    const pct = Math.round(secs/9*100);
+    if(btn) btn.querySelector('.irr-sub').textContent = `${pct}% · ${4-Math.floor(secs/2)} mnt tersisa`;
+    if(secs >= 9) {
+      clearInterval(prog);
+      if(btn){
+        btn.className = 'irr-btn irr-done';
+        btn.innerHTML = `<div class="irr-ico">✅</div><div class="irr-body"><div class="irr-title">Irigasi Selesai</div><div class="irr-sub">${dose}g hidrogel terdistribusi · 4m 30dtk</div></div>`;
+      }
+      toast('✅ Irigasi selesai — '+dose+'g terdistribusi','green');
+      // Auto-reset to ready after 4s
+      setTimeout(()=>{
+        if(btn){
+          btn.className = 'irr-btn irr-ready';
+          btn.innerHTML = `<div class="irr-ico">💧</div><div class="irr-body"><div class="irr-title">Aktifkan Irigasi</div><div class="irr-sub">Distribusi ${dose}g hidrogel ke Petak ${S.sel}</div></div><div class="irr-arrow">›</div>`;
+          btn.onclick = ()=>showIrrSheet(S.sel);
+        }
+      }, 4000);
+    }
+  }, 1000);
+}
+
+// Track ripple position on field card click
+document.addEventListener('click', e=>{
+  const card = e.target.closest('.field-card');
+  if(card){
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--rx', ((e.clientX-r.left)/r.width*100)+'%');
+    card.style.setProperty('--ry', ((e.clientY-r.top)/r.height*100)+'%');
+  }
+});
+
+function openFieldSheet(id){
+  const f = S.fields[id];
+  const st = status(f.vwc);
+  $('sh-det-title').textContent = `Petak ${f.id} — ${f.crop}`;
+  $('sh-det-sub').textContent = `${f.loc} · ${f.node} · ${statusLabel(st)}`;
+  $('sh-det-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:var(--bg);border-radius:var(--r);padding:14px">
+        <div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">VWC Saat Ini</div>
+        <div style="font-family:var(--mono);font-size:34px;font-weight:500;color:${vColor(f.vwc)};line-height:1">${f.vwc.toFixed(1)}<span style="font-size:16px;color:var(--ink-3)">%</span></div>
+        <div style="font-size:11px;color:var(--ink-3);margin-top:4px">Target: ${f.thr}% VWC</div>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--r);padding:14px">
+        <div style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Suhu Tanah</div>
+        <div style="font-family:var(--mono);font-size:34px;font-weight:500;color:var(--ink);line-height:1">${f.temp}<span style="font-size:16px;color:var(--ink-3)">°C</span></div>
+        <div style="font-size:11px;color:var(--ink-3);margin-top:4px">DS18B20 · 12cm</div>
+      </div>
+    </div>
+    <div style="padding:12px 14px;background:${st==='ok'?'var(--mist)':st==='warn'?'var(--amber-l)':'var(--red-l)'};border-radius:var(--r);margin-bottom:14px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px">${st==='ok'?'✅':st==='warn'?'⚠️':'🚨'}</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink)">${statusLabel(st)} — ${f.vwc.toFixed(1)}% VWC</div>
+        <div style="font-size:12px;color:var(--ink-2);margin-top:2px">${f.vwc<f.thr?'Di bawah threshold — irigasi direkomendasikan':'Kondisi dalam batas normal'}</div>
+      </div>
+    </div>
+    <button class="btn-full btn-green" onclick="closeSheet('sh-detail');showIrrSheet('${id}')">💧 Aktifkan Irigasi</button>
+    <button class="btn-full btn-outline" onclick="closeSheet('sh-detail')">Tutup</button>`;
+  openSheet('sh-detail');
+}
+
+function cycleField(){
+  const keys = Object.keys(S.fields);
+  const i = keys.indexOf(S.sel);
+  S.sel = keys[(i+1)%keys.length];
+  buildNav(); // refresh sidebar chips
+  goTab('beranda');
+  toast(`Beralih ke Petak ${S.sel}`);
+}
+
+function clearNotifs(){
+  S.notifs = [];
+  const nb = $('notif-body');
+  if(nb) nb.innerHTML='<div style="padding:30px 20px;text-align:center"><div style="font-size:28px;margin-bottom:8px">✅</div><div style="font-size:13px;color:var(--ink-3)">Semua notifikasi telah dibaca</div></div>';
+  const pip = $('notif-pip'); if(pip) pip.classList.remove('on');
+  closeSheet('sh-notif');
+  toast('Notifikasi dibersihkan');
+  // Also clear beranda notif section
+  const berandaNotifs = document.querySelectorAll('.notif-wrap .notif-card');
+  berandaNotifs.forEach((el,i)=>{
+    setTimeout(()=>{
+      el.style.opacity='0';el.style.transform='translateX(12px)';el.style.transition='.3s';
+      setTimeout(()=>el.remove(), 300);
+    }, i*60);
+  });
+}
+
+function refill(){
+  S.stock = 5000;
+  buildNav(); // refresh sidebar stock display
+  toast('✅ Stok hidrogel diisi ulang: 5.0 kg','green');
+  goTab('stok');
+}
+
+/* ═══════════════ NOTIF SHEET BODY ════ */
+function initNotifSheet(){
+  const map = {crit:'nc-crit',warn:'nc-warn',ok:'nc-ok',info:'nc-info'};
+  const nb = $('notif-body'); if(!nb) return;
+  nb.innerHTML = S.notifs.map(n=>`
+    <div class="notif-card ${map[n.type]}" style="margin-bottom:8px">
+      <span class="nc-ico">${n.icon}</span>
+      <div>
+        <div class="nc-title">${n.title}</div>
+        <div class="nc-body">${n.body}</div>
+        <div class="nc-time">${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function initCuacaSheet(){
+  const cb = $('cuaca-body'); if(!cb) return;
+  const rows=[
+    ['☀️','Hari ini','Cerah berawan','33°C / 24°C','—'],
+    ['🌤️','Besok','Sebagian berawan','32°C / 23°C','—'],
+    ['☁️','Rabu','Mendung','30°C / 22°C','—'],
+    ['🌧️','Kamis','Hujan ringan','27°C / 21°C','4mm'],
+    ['☁️','Jumat','Mendung','29°C / 22°C','—'],
+    ['🌧️','Sabtu','Hujan sedang','26°C / 21°C','12mm'],
+    ['🌤️','Minggu','Cerah berawan','30°C / 22°C','—'],
+  ];
+  cb.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:0">
+      ${rows.map(([ic,d,desc,tmp,rain])=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)">
+        <span style="font-size:22px;flex-shrink:0">${ic}</span>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:500;color:var(--ink)">${d}</div>
+          <div style="font-size:11px;color:var(--ink-3)">${desc}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;font-weight:500;color:var(--ink)">${tmp}</div>
+          <div style="font-size:11px;color:#1A4E7A">${rain!=='—'?'🌧 '+rain:'—'}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div style="margin-top:14px;padding:12px;background:var(--mist);border-radius:var(--r);font-size:12px;color:var(--leaf);line-height:1.5">
+      💡 Jadwal irigasi Jumat malam dibatalkan otomatis — hujan Sabtu 12mm diprakirakan cukup.
+    </div>`;
+}
+
+// init sheets after DOM ready
+document.addEventListener('DOMContentLoaded', ()=>{
+  initNotifSheet();
+  initCuacaSheet();
+});
+// also call immediately for inline scripts
+initNotifSheet();
+initCuacaSheet();
+
+/* ═══════════════ LIVE SIMULATION ════ */
+const deltas = {A1:-.08, A2:-.03, B1:-.06, B2:-.02};
+setInterval(()=>{
+  S.tick++;
+  Object.keys(S.fields).forEach(k=>{
+    const f = S.fields[k];
+    f.vwc = Math.max(20, Math.min(85, f.vwc + deltas[k] + (Math.random()-.54)*.25));
+    f.temp = parseFloat((f.temp + (Math.random()-.5)*.08).toFixed(1));
+  });
+
+  // Update hero live
+  const f = S.fields[S.sel];
+  const hc = $('hero-count');
+  if(hc) hc.textContent = f.vwc.toFixed(0);
+  const ht = $('hero-temp');
+  if(ht) ht.textContent = f.temp.toFixed(1);
+  // Update status label color live
+  const sl = document.querySelector('.status-label');
+  if(sl){
+    const st = f.vwc<30?'crit':f.vwc<45?'warn':'ok';
+    sl.className = 'status-label sl-'+st;
+  }
+  // Update hero card background live
+  const hero = document.querySelector('.hero');
+  // (no bg on hero div, status shown via label — OK)
+
+  // Update dev sensor panel
+  Object.keys(S.fields).forEach(k=>{
+    const fk = S.fields[k];
+    const el = $(`ddev-${k}-vwc`);
+    if(el){ el.textContent=fk.vwc.toFixed(2)+'%'; el.className='dv '+status(fk.vwc); }
+  });
+
+  // Dev log append
+  const log = $('dev-log-el');
+  if(log && S.tick%4===0){
+    const f2=S.fields[['A1','A2','B1','B2'][S.tick%4]];
+    const line=document.createElement('div');
+    line.className='log-line';
+    const t=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Jakarta'});
+    line.innerHTML=`<span class="lt">${t}</span><span class="lt-tag lt-s">SNS</span><span class="lm">${f2.id} VWC=${f2.vwc.toFixed(2)}% TEMP=${f2.temp}°C</span>`;
+    log.appendChild(line);
+    if(log.children.length>20) log.removeChild(log.firstChild);
+    log.scrollTop=log.scrollHeight;
+  }
+}, 3000);
+
+/* ═══════════════ SWIPE NAVIGATION (mobile) ═══════════════ */
+(()=>{
+  let startX=0, startY=0, isDragging=false;
+  const sa = ()=>$('scroll-area');
+  
+  document.addEventListener('touchstart', e=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isDragging = false;
+  }, {passive:true});
+
+  document.addEventListener('touchmove', e=>{
+    const dx = Math.abs(e.touches[0].clientX - startX);
+    const dy = Math.abs(e.touches[0].clientY - startY);
+    if(dx > dy && dx > 10) isDragging = true;
+  }, {passive:true});
+
+  document.addEventListener('touchend', e=>{
+    if(!isDragging || !ROLE) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = Math.abs(e.changedTouches[0].clientY - startY);
+    if(Math.abs(dx) < 60 || dy > 50) return; // not a horizontal swipe
+    
+    // Only swipe if near top (not scrolled in content)
+    const scrollEl = sa();
+    if(scrollEl && scrollEl.scrollTop > 80) return;
+    
+    const tabs = NAVS[ROLE].map(n=>n.id);
+    const cur = tabs.indexOf(curTab);
+    if(cur === -1) return;
+    
+    if(dx < -60 && cur < tabs.length-1) { // swipe left → next
+      goTab(tabs[cur+1]);
+      toast('→ '+(NAVS[ROLE][cur+1]?.lbl||''));
+    } else if(dx > 60 && cur > 0) { // swipe right → prev
+      goTab(tabs[cur-1]);
+      toast('← '+(NAVS[ROLE][cur-1]?.lbl||''));
+    }
+  }, {passive:true});
+})();
+
+/* ═══════════════ KEYBOARD SHORTCUTS ═══════════════ */
+document.addEventListener('keydown', e=>{
+  if(!ROLE) return;
+  const tabs = NAVS[ROLE].map(n=>n.id);
+  const cur = tabs.indexOf(curTab);
+  if(e.key==='ArrowRight' && cur<tabs.length-1) goTab(tabs[cur+1]);
+  if(e.key==='ArrowLeft'  && cur>0)              goTab(tabs[cur-1]);
+  if(e.key==='Escape') {
+    document.querySelectorAll('.overlay.on').forEach(o=>o.classList.remove('on'));
+  }
+});
+
+/* ═══════════════ INSTALL PROMPT (PWA hint) ═══════════════ */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show subtle install hint after 30s
+  setTimeout(()=>{
+    if(deferredPrompt && ROLE==='petani'){
+      toast('💡 Pasang app ini di HP kamu untuk akses offline');
+    }
+  }, 30000);
+});
+
+</script>
+</body>
+</html>
