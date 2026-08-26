@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>HyMupen</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tb-left">
+      <span class="tb-logo">🌱</span>
+      <span class="tb-name">HyMupen</span>
+      <span class="tb-badge" id="tb-badge"></span>
+    </div>
+    <div class="tb-right">
+      <button class="tb-icon-btn" onclick="goTab('notifikasi')" title="Notifikasi">
+        🔔<span class="tb-pip" id="notif-pip"></span>
+      </button>
+      <button class="tb-icon-btn" onclick="handleLogout()" title="Keluar">🚪</button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <!-- Sidebar (desktop) -->
+    <div class="sidebar" id="sidebar"></div>
+
+    <!-- Konten -->
+    <div class="scroll-area" id="scroll-area">
+      <div class="page" id="page-mount"></div>
+    </div>
+  </div>
+
+  <!-- Bottom nav (mobile) -->
+  <div class="bottom-nav" id="bnav"></div>
+</div>
+
+<!-- ═══ Sheet: tambah/edit lahan ═══ -->
+<div class="overlay" id="ov-lahan" onclick="shClick(event,'ov-lahan')">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 id="lahan-form-title">Tambah petak lahan</h3>
+      <button class="sheet-close" onclick="closeSheet('ov-lahan')">✕</button>
+    </div>
+    <form id="form-lahan">
+      <input type="hidden" id="lf-id">
+      <div class="field">
+        <label for="lf-kode">Kode petak</label>
+        <input id="lf-kode" placeholder="Contoh: A1" maxlength="10" required>
+      </div>
+      <div class="field">
+        <label for="lf-nama">Nama petak</label>
+        <input id="lf-nama" placeholder="Contoh: Petak Utara 1" required>
+      </div>
+      <div class="field">
+        <label for="lf-jenis">Jenis tanaman</label>
+        <input id="lf-jenis" placeholder="Contoh: Jagung" required>
+      </div>
+      <div class="field">
+        <label for="lf-lokasi">Lokasi <span style="font-weight:400;color:var(--ink-4)">(opsional)</span></label>
+        <input id="lf-lokasi" placeholder="Contoh: Blok Utara">
+      </div>
+      <div class="field">
+        <label for="lf-ambang">Ambang batas kelembapan (%)</label>
+        <input id="lf-ambang" type="number" min="10" max="80" value="35" required>
+      </div>
+      <div class="field">
+        <label for="lf-dosis">Dosis hidrogel per irigasi (gram)</label>
+        <input id="lf-dosis" type="number" min="10" max="500" value="80" required>
+      </div>
+      <div class="sheet-actions">
+        <button type="button" class="btn-danger" id="lf-delete-btn" style="display:none" onclick="handleDeleteLahan()">Hapus</button>
+        <button type="submit" class="btn-main" id="lf-submit-btn">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ Sheet: konfirmasi irigasi ═══ -->
+<div class="overlay" id="ov-irigasi" onclick="shClick(event,'ov-irigasi')">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3>Jalankan irigasi?</h3>
+      <button class="sheet-close" onclick="closeSheet('ov-irigasi')">✕</button>
+    </div>
+    <p id="irigasi-detail" style="font-size:13.5px;color:var(--ink-3);line-height:1.5;margin-bottom:18px"></p>
+    <div class="sheet-actions">
+      <button class="btn-main" id="btn-confirm-irigasi" onclick="confirmIrigasi()">Ya, jalankan</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Masuk — HyMupen</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="center-shell">
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <div class="ico">🌱</div>
+      <h1>HyMupen</h1>
+      <div class="tag">Irigasi hidrogel pintar untuk lahan kamu</div>
+    </div>
+
+    <div id="alert-box"></div>
+
+    <!-- ═══ FORM LOGIN ═══ -->
+    <form id="form-login">
+      <div class="field">
+        <label for="li-username">Username</label>
+        <input id="li-username" type="text" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="li-password">Password</label>
+        <input id="li-password" type="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-main" id="btn-login">
+        <span id="login-label">Masuk</span>
+      </button>
+    </form>
+
+    <div class="auth-switch" id="switch-to-register">
+      Belum punya akun? <button type="button" onclick="showForm('register')">Daftar</button>
+    </div>
+
+    <!-- ═══ FORM DAFTAR ═══ -->
+    <form id="form-register" style="display:none">
+      <div class="role-pick" id="reg-role-pick">
+        <button type="button" data-role="petani" class="on">
+          <span class="ri">🧑‍🌾</span>Petani
+        </button>
+        <button type="button" data-role="penyuluh">
+          <span class="ri">👨‍💼</span>Penyuluh
+        </button>
+      </div>
+      <div class="field">
+        <label for="rg-nama">Nama lengkap</label>
+        <input id="rg-nama" type="text" required>
+      </div>
+      <div class="field">
+        <label for="rg-username">Username</label>
+        <input id="rg-username" type="text" minlength="4" maxlength="30" required>
+      </div>
+      <div class="field">
+        <label for="rg-telepon">No. HP <span style="font-weight:400;color:var(--ink-4)">(opsional)</span></label>
+        <input id="rg-telepon" type="tel">
+      </div>
+      <div class="field">
+        <label for="rg-password">Password</label>
+        <input id="rg-password" type="password" minlength="6" required>
+      </div>
+      <button type="submit" class="btn-main" id="btn-register">
+        <span id="register-label">Buat akun</span>
+      </button>
+    </form>
+
+    <div class="auth-switch" id="switch-to-login" style="display:none">
+      Sudah punya akun? <button type="button" onclick="showForm('login')">Masuk</button>
+    </div>
+
+    <a href="admin.html" class="btn-ghost" style="display:block;text-align:center;text-decoration:none;margin-top:18px">
+      Masuk sebagai admin/dev
+    </a>
+
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/auth.js"></script>
+</body>
+</html>

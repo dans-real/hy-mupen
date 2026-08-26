@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Panel Admin — HyMupen</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .admin-shell{max-width:900px;margin:0 auto;padding:20px 16px 60px}
+  .admin-tabs{display:flex;gap:8px;margin-bottom:16px}
+  .admin-tabs button{padding:9px 16px;border-radius:20px;border:1.5px solid var(--bdr2);background:var(--surf);font-size:13.5px;font-weight:700;color:var(--ink-3)}
+  .admin-tabs button.on{background:var(--leaf);border-color:var(--leaf);color:#fff}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--ink-3);font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;padding:8px 10px;border-bottom:1.5px solid var(--bdr)}
+  td{padding:9px 10px;border-bottom:1px solid var(--bdr)}
+  .admin-topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--surf);border-bottom:1px solid var(--bdr)}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ADMIN ═══ -->
+<div class="center-shell" id="admin-login-shell">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="ico">⚙️</div>
+      <h1>Panel Admin</h1>
+      <div class="tag">HyMupen — akses teknis (dev/superadmin)</div>
+    </div>
+    <div id="admin-alert"></div>
+    <form id="form-admin-login">
+      <div class="field">
+        <label for="ad-username">Username admin</label>
+        <input id="ad-username" type="text" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="ad-password">Password</label>
+        <input id="ad-password" type="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-main" id="btn-admin-login"><span id="admin-login-label">Masuk</span></button>
+    </form>
+    <a href="login.html" class="btn-ghost" style="display:block;text-align:center;text-decoration:none;margin-top:10px">← Kembali ke login petani/penyuluh</a>
+  </div>
+</div>
+
+<!-- ═══ PANEL ═══ -->
+<div id="admin-panel" style="display:none">
+  <div class="admin-topbar">
+    <div style="font-weight:700;color:var(--leaf);display:flex;align-items:center;gap:8px">⚙️ Panel Admin HyMupen</div>
+    <button class="tb-icon-btn" onclick="adminLogout()" title="Keluar">🚪</button>
+  </div>
+  <div class="admin-shell">
+    <div class="admin-tabs">
+      <button id="at-sensor" onclick="showAdminTab('sensor')">📡 Sensor Teknis</button>
+      <button id="at-log" onclick="showAdminTab('log')">📜 Log Sistem</button>
+    </div>
+    <div id="admin-content"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="assets/js/api.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
